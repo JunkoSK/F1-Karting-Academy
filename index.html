@@ -1419,7 +1419,7 @@
 const vipsContainer = document.getElementById('shop-vips');
             vipsContainer.innerHTML = '';
             
-            // Najskôr vykreslíme skratky pretekárov z vipCatalog
+            // 1. Vykreslenie skratiek pretekárov (vipCatalog)
             vipCatalog.forEach((v, idx) => {
                 const owned = userData.inventory.includes(v.id);
                 const active = userData.vipTag === v.id;
@@ -1432,14 +1432,14 @@ const vipsContainer = document.getElementById('shop-vips');
                         </div>
                         <div>
                             ${active ? '<span class="text-xs text-emerald-400 font-bold">Aktivované</span>' :
-                              owned ? `<button onclick="equipVip('${v.type}', ${JSON.stringify(v.id)}, '${v.colorClass || ''}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
-                              `<button onclick="buyVipItem('${v.type}', ${JSON.stringify(v.id)}, '${v.colorClass || ''}', ${v.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${v.price} 🪙</button>`}
+                              owned ? `<button onclick="equipTagByIndex(${idx})" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
+                              `<button onclick="buyTagByIndex(${idx})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${v.price} 🪙</button>`}
                         </div>
                     </div>
                 `;
             });
 
-            // Potom pod nich vykreslíme hlášky z quotesCatalog
+            // 2. Vykreslenie hlášok (quotesCatalog)
             quotesCatalog.forEach((q, idx) => {
                 const owned = userData.inventory.includes(q.id);
                 const active = userData.quote === q.id;
@@ -1613,8 +1613,8 @@ const vipsContainer = document.getElementById('shop-vips');
                 list.innerHTML = '<div class="text-center text-red-400 text-sm py-4">Chyba pri načítavaní rebríčka.</div>';
             }
         }
-        function buyVipByIndex(index) {
-            const v = vipCatalog.find((item, idx) => (item.index !== undefined ? item.index : idx) === index);
+        function buyTagByIndex(index) {
+            const v = vipCatalog[index];
             if (!v) return;
 
             if (userData.coins >= v.price) {
@@ -1624,7 +1624,7 @@ const vipsContainer = document.getElementById('shop-vips');
                     userData.inventory.push(v.id);
                     userData.stats.itemsBought = (userData.stats.itemsBought || 0) + 1;
                 }
-                equipVipByIndex(index);
+                equipTagByIndex(index);
                 renderShop();
             } else {
                 playSound('wrong');
@@ -1632,17 +1632,43 @@ const vipsContainer = document.getElementById('shop-vips');
             }
         }
 
-        function equipVipByIndex(index) {
-            const v = vipCatalog.find((item, idx) => (item.index !== undefined ? item.index : idx) === index);
+        function equipTagByIndex(index) {
+            const v = vipCatalog[index];
             if (!v) return;
 
             playSound('click');
-            if (v.type === 'tag') {
-                userData.vipTag = (userData.vipTag === v.id) ? "" : v.id;
-                userData.vipTagClass = v.colorClass || '';
-            } else if (v.type === 'quote') {
-                userData.quote = (userData.quote === v.id) ? "" : v.id;
+            userData.vipTag = (userData.vipTag === v.id) ? "" : v.id;
+            userData.vipTagClass = v.colorClass || '';
+            saveUserData();
+            updateProfileUI();
+            renderShop();
+        }
+
+        function buyQuoteByIndex(index) {
+            const q = quotesCatalog[index];
+            if (!q) return;
+
+            if (userData.coins >= q.price) {
+                playSound('buy');
+                userData.coins -= q.price;
+                if (!userData.inventory.includes(q.id)) {
+                    userData.inventory.push(q.id);
+                    userData.stats.itemsBought = (userData.stats.itemsBought || 0) + 1;
+                }
+                equipQuoteByIndex(index);
+                renderShop();
+            } else {
+                playSound('wrong');
+                alert("Nedostatok mincí!");
             }
+        }
+
+        function equipQuoteByIndex(index) {
+            const q = quotesCatalog[index];
+            if (!q) return;
+
+            playSound('click');
+            userData.quote = (userData.quote === q.id) ? "" : q.id;
             saveUserData();
             updateProfileUI();
             renderShop();
