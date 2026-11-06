@@ -111,11 +111,11 @@
         </div>
 
         <div class="flex gap-2 mb-6 bg-darkBg p-1.5 rounded-2xl border border-borderCol text-xs font-bold">
-            <button type="button" onclick="switchAuthMode('login')" id="tab-login-btn" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white">Prihlásiť sa</button>
-            <button type="button" onclick="switchAuthMode('register')" id="tab-register-btn" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">Registrovať sa</button>
+            <button type="button" onclick="switchAuthMode('login')" id="tab-login-btn" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer">Prihlásiť sa</button>
+            <button type="button" onclick="switchAuthMode('register')" id="tab-register-btn" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer">Registrovať sa</button>
         </div>
 
-        <form id="auth-form" class="space-y-4" onsubmit="handleAuth(event)">
+        <form id="auth-form" class="space-y-4" onsubmit="handleAuth(event); return false;">
             <div>
                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Herné meno</label>
                 <input type="text" id="auth-username" required class="w-full bg-darkBg border border-borderCol rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 transition text-sm" placeholder="napr. RacerSk">
@@ -284,7 +284,6 @@
             appId: "1:531787077252:web:9cc1446a52f28ba3f814d1"
         };
 
-        // Inicializácia pomocou kompatibilného rozhrania, aby fungovala Realtime Database
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         // =========================================================
@@ -543,12 +542,12 @@
             errorDiv.classList.add('hidden');
 
             if (mode === 'login') {
-                loginBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
-                regBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
-                submitBtn.textContent = "Prihlásiť sa do Garáže";
+                loginBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer";
+                regBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer";
+                submitBtn.textContent = "Vstúpiť do Garáže";
             } else {
-                regBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
-                loginBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
+                regBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer";
+                loginBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer";
                 submitBtn.textContent = "Zaregistrovať sa";
             }
         }
@@ -560,53 +559,59 @@
         }
 
         function handleAuth(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
             playSound('click');
             const usernameInput = document.getElementById('auth-username');
             const passwordInput = document.getElementById('auth-password');
             const errorDiv = document.getElementById('auth-error-msg');
             
-            if (!usernameInput || !passwordInput) return;
+            if (!usernameInput || !passwordInput) return false;
             
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
 
-            if (username && password) {
-                db.ref('users/' + username).once('value', (snapshot) => {
-                    const existingUser = snapshot.val();
-
-                    if (authMode === 'register') {
-                        if (existingUser) {
-                            errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
-                            errorDiv.classList.remove('hidden');
-                            return;
-                        }
-                        currentUser = username;
-                        userData.password = password;
-                        saveUserData();
-                    } else {
-                        if (!existingUser) {
-                            errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
-                            errorDiv.classList.remove('hidden');
-                            return;
-                        }
-                        if (existingUser.password && existingUser.password !== password) {
-                            errorDiv.textContent = "Nesprávne heslo!";
-                            errorDiv.classList.remove('hidden');
-                            return;
-                        }
-                        currentUser = username;
-                        userData = { ...userData, ...existingUser };
-                    }
-
-                    errorDiv.classList.add('hidden');
-                    if (userData.theme) setTheme(userData.theme);
-
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('main-menu').classList.remove('hidden');
-                    updateProfileUI();
-                });
+            if (!username || !password) {
+                errorDiv.textContent = "Zadajte meno aj heslo!";
+                errorDiv.classList.remove('hidden');
+                return false;
             }
+
+            db.ref('users/' + username).once('value', (snapshot) => {
+                const existingUser = snapshot.val();
+
+                if (authMode === 'register') {
+                    if (existingUser) {
+                        errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
+                        errorDiv.classList.remove('hidden');
+                        return;
+                    }
+                    currentUser = username;
+                    userData.password = password;
+                    saveUserData();
+                } else {
+                    if (!existingUser) {
+                        errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
+                        errorDiv.classList.remove('hidden');
+                        return;
+                    }
+                    if (existingUser.password && existingUser.password !== password) {
+                        errorDiv.textContent = "Nesprávne heslo!";
+                        errorDiv.classList.remove('hidden');
+                        return;
+                    }
+                    currentUser = username;
+                    userData = { ...userData, ...existingUser };
+                }
+
+                errorDiv.classList.add('hidden');
+                if (userData.theme) setTheme(userData.theme);
+
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-menu').classList.remove('hidden');
+                updateProfileUI();
+            });
+
+            return false;
         }
 
         function updateProfileUI() {
