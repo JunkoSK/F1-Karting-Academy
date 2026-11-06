@@ -1198,87 +1198,103 @@
         }
 
         function renderQuestion() {
-            hideQuizMessage();
-            const q = activeQuizQuestions[currentQuestionIdx];
-            document.getElementById('question-category').textContent = q.category.toUpperCase();
-            document.getElementById('current-q-num').textContent = currentQuestionIdx + 1;
-            document.getElementById('question-text').textContent = q.question;
+    hideQuizMessage();
+    const q = activeQuizQuestions[currentQuestionIdx];
+    document.getElementById('question-category').textContent = q.category.toUpperCase();
+    document.getElementById('current-q-num').textContent = currentQuestionIdx + 1;
+    document.getElementById('question-text').textContent = q.question;
 
-            questionStartTime = Date.now();
+    questionStartTime = Date.now();
 
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
+    // Vytvoríme pole objektov, kde spojíme text odpovede s informáciou, či bola pôvodne správna
+    let optionsWithMeta = q.options.map((opt, idx) => ({
+        text: opt,
+        isCorrect: idx === q.correct
+    }));
 
-            q.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = "w-full bg-darkBg hover:bg-slate-800 text-left p-4 rounded-xl border border-borderCol font-semibold transition text-sm flex items-center justify-between cursor-pointer";
-                btn.innerHTML = `<span>${opt}</span>`;
-                btn.onclick = () => checkAnswer(idx, btn);
-                container.appendChild(btn);
-            });
+    // Náhodne premiešame poradie možností (Shuffle)
+    optionsWithMeta.sort(() => Math.random() - 0.5);
+
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+
+    optionsWithMeta.forEach((optObj) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full bg-darkBg hover:bg-slate-800 text-left p-4 rounded-xl border border-borderCol font-semibold transition text-sm flex items-center justify-between cursor-pointer";
+        btn.innerHTML = `<span>${optObj.text}</span>`;
+        
+        // Overujeme kliknutie na základe nového premiešaného poradia
+        btn.onclick = () => checkAnswerMixed(optObj.isCorrect, btn, optionsWithMeta);
+        container.appendChild(btn);
+    });
+}
+
+// Pomocná funkcia na vyhodnotenie premiešanej otázky
+function checkAnswerMixed(isCorrect, btnElement, optionsWithMeta) {
+    const responseTime = (Date.now() - questionStartTime) / 1000;
+    const cardBox = document.getElementById('quiz-card-box');
+
+    const allBtns = document.getElementById('options-container').querySelectorAll('button');
+    allBtns.forEach(b => b.disabled = true);
+
+    if (isCorrect) {
+        playSound('correct');
+        btnElement.classList.add('bg-emerald-600/30', 'border-emerald-500');
+
+        userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
+
+        let qScore = 60;
+        let qCoins = 8;
+        let speedText = "Štandardné tempo";
+
+        if (responseTime < 5.0) {
+            qScore = 150;
+            qCoins = 30;
+            speedText = "⚡ BLESKOVÁ POLE POSITION!";
+            userData.stats.lightningAnswers = (userData.stats.lightningAnswers || 0) + 1;
+        } else if (responseTime < 10.0) {
+            qScore = 100;
+            qCoins = 18;
+            speedText = "🔥 Skvelá rýchlosť v zákrute!";
         }
 
-        function checkAnswer(selectedIdx, btnElement) {
-            const q = activeQuizQuestions[currentQuestionIdx];
-            const isCorrect = selectedIdx === q.correct;
-            const responseTime = (Date.now() - questionStartTime) / 1000;
-            const cardBox = document.getElementById('quiz-card-box');
+        userData.coins += qCoins;
+        userData.score = (userData.score || 0) + qScore;
 
-            const allBtns = document.getElementById('options-container').querySelectorAll('button');
-            allBtns.forEach(b => b.disabled = true);
+        cardBox.classList.add('anim-glow');
+        setTimeout(() => cardBox.classList.remove('anim-glow'), 300);
 
-            if (isCorrect) {
-                playSound('correct');
-                btnElement.classList.add('bg-emerald-600/30', 'border-emerald-500');
-
-                userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
-
-                let qScore = 60;
-                let qCoins = 8;
-                let speedText = "Štandardné tempo";
-
-                if (responseTime < 5.0) {
-                    qScore = 150;
-                    qCoins = 30;
-                    speedText = "⚡ BLESKOVÁ POLE POSITION!";
-                    userData.stats.lightningAnswers = (userData.stats.lightningAnswers || 0) + 1;
-                } else if (responseTime < 10.0) {
-                    qScore = 100;
-                    qCoins = 18;
-                    speedText = "🔥 Skvelá rýchlosť v zákrute!";
-                }
-
-                userData.coins += qCoins;
-                userData.score = (userData.score || 0) + qScore;
-
-                cardBox.classList.add('anim-glow');
-                setTimeout(() => cardBox.classList.remove('anim-glow'), 300);
-
-                showQuizMessage(`✅ Správne! ${speedText}\n(+${qScore} ⭐, +${qCoins} 🪙)`, true);
-            } else {
-                playSound('wrong');
-                btnElement.classList.add('bg-red-600/30', 'border-red-500');
-                allBtns[q.correct].classList.add('bg-emerald-600/20', 'border-emerald-500');
-
-                showQuizMessage(`❌ Nesprávne!`, false);
+        showQuizMessage(`✅ Správne! ${speedText}\n(+${qScore} ⭐, +${qCoins} 🪙)`, true);
+    } else {
+        playSound('wrong');
+        btnElement.classList.add('bg-red-600/30', 'border-red-500');
+        
+        // Označíme zelenou to tlačidlo, ktoré bolo reálne správne
+        allBtns.forEach((b, idx) => {
+            if (optionsWithMeta[idx].isCorrect) {
+                b.classList.add('bg-emerald-600/20', 'border-emerald-500');
             }
+        });
 
-            setTimeout(() => {
-                currentQuestionIdx++;
-                if (currentQuestionIdx < activeQuizQuestions.length) {
-                    renderQuestion();
-                } else {
-                    userData.stats.quizzesCompleted = (userData.stats.quizzesCompleted || 0) + 1;
-                    if (quizMode === 'karting') userData.stats.kartingCompleted = (userData.stats.kartingCompleted || 0) + 1;
-                    if (quizMode === 'f1') userData.stats.f1Completed = (userData.stats.f1Completed || 0) + 1;
-                    if (quizMode === 'mixed') userData.stats.mixedCompleted = (userData.stats.mixedCompleted || 0) + 1;
-                    saveUserData();
-                    playSound('pass_car');
-                    showQuizMessage(`🏁 Kvíz úspešne dokončený!`, true);
-                    setTimeout(() => returnToMenu(), 2500);
-                }
-            }, 1400);
+        showQuizMessage(`❌ Nesprávne!`, false);
+    }
+
+    setTimeout(() => {
+        currentQuestionIdx++;
+        if (currentQuestionIdx < activeQuizQuestions.length) {
+            renderQuestion();
+        } else {
+            userData.stats.quizzesCompleted = (userData.stats.quizzesCompleted || 0) + 1;
+            if (quizMode === 'karting') userData.stats.kartingCompleted = (userData.stats.kartingCompleted || 0) + 1;
+            if (quizMode === 'f1') userData.stats.f1Completed = (userData.stats.f1Completed || 0) + 1;
+            if (quizMode === 'mixed') userData.stats.mixedCompleted = (userData.stats.mixedCompleted || 0) + 1;
+            saveUserData();
+            playSound('pass_car');
+            showQuizMessage(`🏁 Kvíz úspešne dokončený!`, true);
+            setTimeout(() => returnToMenu(), 2500);
         }
+    }, 1400);
+}
 
         function showQuizMessage(msg, isSuccess) {
             const m = document.getElementById('quiz-message');
