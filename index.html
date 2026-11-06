@@ -1144,7 +1144,6 @@
             if (currentUser) {
                 const { db, ref, set } = window.dbTools;
                 set(ref(db, 'users/' + currentUser), userData);
-                // Ukladáme do rebríčka kompletné dáta pre profil, oramovanie a hlášky
                 set(ref(db, 'leaderboard/' + currentUser), {
                     username: currentUser,
                     score: userData.score || 0,
@@ -1266,7 +1265,7 @@
                 } else if (responseTime < 10.0) {
                     qScore = 50;
                     qCoins = 9;
-                    speedText = "🔥 Skvelá rýchlosť v zákrute!";
+                    speedText = "🔥 Skvelá rýchlost v zákrute!";
                 }
 
                 userData.coins += qCoins;
@@ -1425,8 +1424,8 @@
                         </div>
                         <div>
                             ${active ? '<span class="text-xs text-emerald-400 font-bold">Aktivované</span>' :
-                              owned ? `<button onclick="equipVip('${v.type}', '${v.id}', '${v.colorClass || ''}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
-                              `<button onclick="buyVipItem('${v.type}', '${v.id}', '${v.colorClass || ''}', ${v.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${v.price} 🪙</button>`}
+                              owned ? `<button onclick="equipVip('${v.type}', ${JSON.stringify(v.id)}, '${v.colorClass || ''}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
+                              `<button onclick="buyVipItem('${v.type}', ${JSON.stringify(v.id)}, '${v.colorClass || ''}', ${v.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${v.price} 🪙</button>`}
                         </div>
                     </div>
                 `;
