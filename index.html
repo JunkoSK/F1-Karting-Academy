@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 & Karting Academy</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase skripty (kompatibilná verzia pre priame vloženie do HTML) -->
+    <!-- Firebase kompatibilné skripty pre priame vloženie do HTML -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -274,26 +274,19 @@
 
     <script>
         // ==================== FIREBASE CONFIG ====================
-        // Zereaguj tieto údaje podľa svojho projektu vo Firebase konzole!
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNHKoHO426UEm-xW3F02z_s44dFMtH_n0",
+            authDomain: "f1-and-karting-academy.firebaseapp.com",
+            databaseURL: "https://f1-and-karting-academy-default-rtdb.firebaseio.com",
+            projectId: "f1-and-karting-academy",
+            storageBucket: "f1-and-karting-academy.firebasestorage.app",
+            messagingSenderId: "531787077252",
+            appId: "1:531787077252:web:9cc1446a52f28ba3f814d1"
+        };
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCNHKoHO426UEm-xW3F02z_s44dFMtH_n0",
-  authDomain: "f1-and-karting-academy.firebaseapp.com",
-  projectId: "f1-and-karting-academy",
-  storageBucket: "f1-and-karting-academy.firebasestorage.app",
-  messagingSenderId: "531787077252",
-  appId: "1:531787077252:web:9cc1446a52f28ba3f814d1"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-    
+        // Inicializácia pomocou kompatibilného rozhrania, aby fungovala Realtime Database
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
         // =========================================================
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -579,7 +572,6 @@ const app = initializeApp(firebaseConfig);
             const password = passwordInput.value;
 
             if (username && password) {
-                // Bezpečné načítanie údajov z Firebase databázy
                 db.ref('users/' + username).once('value', (snapshot) => {
                     const existingUser = snapshot.val();
 
@@ -590,7 +582,7 @@ const app = initializeApp(firebaseConfig);
                             return;
                         }
                         currentUser = username;
-                        userData.password = password; // Uloženie hesla pre jednoduchú verziu v DB
+                        userData.password = password;
                         saveUserData();
                     } else {
                         if (!existingUser) {
@@ -646,7 +638,6 @@ const app = initializeApp(firebaseConfig);
             document.getElementById('quiz-user-coins').textContent = userData.coins;
         }
 
-        // Ukladanie dát do Firebase (profil + rebríček)
         function saveUserData() {
             if (currentUser) {
                 db.ref('users/' + currentUser).set(userData);
@@ -1015,7 +1006,6 @@ const app = initializeApp(firebaseConfig);
             renderAchievements();
         }
 
-        // Načítanie rebríčka reálne z Firebase
         function openLeaderboard() {
             playSound('click');
             document.getElementById('main-menu').classList.add('hidden');
