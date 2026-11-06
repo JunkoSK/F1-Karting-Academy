@@ -1587,7 +1587,9 @@ const vipsContainer = document.getElementById('shop-vips');
                     const avatar = player.avatar || '🏎️';
                     const frame = player.frame || 'frame-dark';
                     const tag = player.vipTag ? `<span class="font-mono text-xs ${player.vipTagClass || 'text-primary-custom'} mr-1">${player.vipTag}</span>` : '';
-                    const quote = player.quote ? `<span class="block text-[10px] text-slate-400 italic">${player.quote}</span>` : '';
+                    
+                    // Hláška pod menom v úvodzovkách
+                    const quote = player.quote ? `<span class="block text-[10px] text-slate-400 italic">„${player.quote.replace(/^["„]|["“]$/g, '')}“</span>` : '';
 
                     list.innerHTML += `
                         <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border ${isCurrent ? 'border-primary-custom' : 'border-borderCol'}">
