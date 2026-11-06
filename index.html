@@ -275,18 +275,25 @@
     <script>
         // ==================== FIREBASE CONFIG ====================
         // Zereaguj tieto údaje podľa svojho projektu vo Firebase konzole!
-        const firebaseConfig = {
-            apiKey: "TVOJ_API_KEY",
-            authDomain: "tvoj-projekt.firebaseapp.com",
-            databaseURL: "https://tvoj-projekt-default-rtdb.firebaseio.com",
-            projectId: "tvoj-projekt",
-            storageBucket: "tvoj-projekt.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123:web:abc"
-        };
+        // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCNHKoHO426UEm-xW3F02z_s44dFMtH_n0",
+  authDomain: "f1-and-karting-academy.firebaseapp.com",
+  projectId: "f1-and-karting-academy",
+  storageBucket: "f1-and-karting-academy.firebasestorage.app",
+  messagingSenderId: "531787077252",
+  appId: "1:531787077252:web:9cc1446a52f28ba3f814d1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+    
         // =========================================================
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
