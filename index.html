@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 & Karting Academy</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase skripty (kompatibilná verzia pre priame vloženie do HTML) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -92,7 +95,6 @@
         }
         .anim-glow { animation: pulseGlow 0.3s ease-in-out; }
 
-        /* Šachovnicový efekt pozadia hlavičky */
         .checkered-banner {
             background: repeating-linear-gradient(45deg, #111827, #111827 10px, #1f2937 10px, #1f2937 20px);
             border-bottom: 2px dashed var(--color-primary);
@@ -129,7 +131,6 @@
 
     <!-- Main Game Menu -->
     <div id="main-menu" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10 overflow-hidden">
-        <!-- Šachovnicový efekt v hornej časti menu -->
         <div class="checkered-banner -mx-8 -mt-8 p-3 mb-6 flex justify-between items-center px-6">
             <span class="text-xs font-extrabold tracking-widest text-white uppercase drop-shadow">🏁 F1 & KARTING ACADEMY 🏁</span>
             <span class="text-xs text-yellow-400 font-bold">VIP Garáž</span>
@@ -272,6 +273,22 @@
     </div>
 
     <script>
+        // ==================== FIREBASE CONFIG ====================
+        // Zereaguj tieto údaje podľa svojho projektu vo Firebase konzole!
+        const firebaseConfig = {
+            apiKey: "TVOJ_API_KEY",
+            authDomain: "tvoj-projekt.firebaseapp.com",
+            databaseURL: "https://tvoj-projekt-default-rtdb.firebaseio.com",
+            projectId: "tvoj-projekt",
+            storageBucket: "tvoj-projekt.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123:web:abc"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        // =========================================================
+
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
@@ -555,35 +572,41 @@
             const password = passwordInput.value;
 
             if (username && password) {
-                const saved = localStorage.getItem('f1_karting_' + username);
+                // Bezpečné načítanie údajov z Firebase databázy
+                db.ref('users/' + username).once('value', (snapshot) => {
+                    const existingUser = snapshot.val();
 
-                if (authMode === 'register') {
-                    if (saved) {
-                        errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
-                        errorDiv.classList.remove('hidden');
-                        return;
+                    if (authMode === 'register') {
+                        if (existingUser) {
+                            errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
+                            errorDiv.classList.remove('hidden');
+                            return;
+                        }
+                        currentUser = username;
+                        userData.password = password; // Uloženie hesla pre jednoduchú verziu v DB
+                        saveUserData();
+                    } else {
+                        if (!existingUser) {
+                            errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
+                            errorDiv.classList.remove('hidden');
+                            return;
+                        }
+                        if (existingUser.password && existingUser.password !== password) {
+                            errorDiv.textContent = "Nesprávne heslo!";
+                            errorDiv.classList.remove('hidden');
+                            return;
+                        }
+                        currentUser = username;
+                        userData = { ...userData, ...existingUser };
                     }
-                    currentUser = username;
-                    saveUserData();
-                } else {
-                    if (!saved) {
-                        errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
-                        errorDiv.classList.remove('hidden');
-                        return;
-                    }
-                    currentUser = username;
-                    try {
-                        const parsed = JSON.parse(saved);
-                        userData = { ...userData, ...parsed };
-                    } catch(err) {}
-                }
 
-                errorDiv.classList.add('hidden');
-                if (userData.theme) setTheme(userData.theme);
+                    errorDiv.classList.add('hidden');
+                    if (userData.theme) setTheme(userData.theme);
 
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-menu').classList.remove('hidden');
-                updateProfileUI();
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    document.getElementById('main-menu').classList.remove('hidden');
+                    updateProfileUI();
+                });
             }
         }
 
@@ -616,9 +639,15 @@
             document.getElementById('quiz-user-coins').textContent = userData.coins;
         }
 
+        // Ukladanie dát do Firebase (profil + rebríček)
         function saveUserData() {
             if (currentUser) {
-                localStorage.setItem('f1_karting_' + currentUser, JSON.stringify(userData));
+                db.ref('users/' + currentUser).set(userData);
+                db.ref('leaderboard/' + currentUser).set({
+                    username: currentUser,
+                    score: userData.score || 0,
+                    title: userData.title
+                });
             }
         }
 
@@ -704,7 +733,6 @@
 
                 userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
 
-                // Výraznejšie odstupňovanie odmien podľa rýchlosti
                 let qScore = 60;
                 let qCoins = 8;
                 let speedText = "Štandardné tempo";
@@ -774,13 +802,10 @@
             const q = activeQuizQuestions[currentQuestionIdx];
             const allBtns = document.getElementById('options-container').querySelectorAll('button');
             
-            // Nájde jednu nesprávnu možnosť a deaktivuje ju
-            let disabledCount = 0;
             for (let i = 0; i < allBtns.length; i++) {
                 if (i !== q.correct && !allBtns[i].disabled) {
                     allBtns[i].style.opacity = '0.3';
                     allBtns[i].disabled = true;
-                    disabledCount++;
                     break;
                 }
             }
@@ -983,21 +1008,45 @@
             renderAchievements();
         }
 
+        // Načítanie rebríčka reálne z Firebase
         function openLeaderboard() {
             playSound('click');
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('leaderboard-screen').classList.remove('hidden');
 
             const list = document.getElementById('leaderboard-list');
-            list.innerHTML = `
-                <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border border-primary-custom">
-                    <div class="flex items-center gap-3">
-                        <span class="font-extrabold text-sm text-primary-custom">1.</span>
-                        <span class="font-bold text-white text-sm">${currentUser}</span>
-                    </div>
-                    <span class="font-extrabold text-primary-custom text-sm">${userData.score || 0} ⭐</span>
-                </div>
-            `;
+            list.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Načítavam rebríček...</div>';
+
+            db.ref('leaderboard').once('value', (snapshot) => {
+                list.innerHTML = '';
+                let players = [];
+                snapshot.forEach((child) => {
+                    players.push(child.val());
+                });
+
+                players.sort((a, b) => b.score - a.score);
+
+                if (players.length === 0) {
+                    list.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Zatiaľ žiadni hráči v rebríčku.</div>';
+                    return;
+                }
+
+                players.slice(0, 10).forEach((player, index) => {
+                    const isCurrent = player.username === currentUser;
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border ${isCurrent ? 'border-primary-custom' : 'border-borderCol'}">
+                            <div class="flex items-center gap-3">
+                                <span class="font-extrabold text-sm text-primary-custom">${index + 1}.</span>
+                                <div>
+                                    <span class="font-bold text-white text-sm">${player.username}</span>
+                                    <span class="block text-[10px] text-slate-400">${player.title || 'Jazdec'}</span>
+                                </div>
+                            </div>
+                            <span class="font-extrabold text-primary-custom text-sm">${player.score || 0} ⭐</span>
+                        </div>
+                    `;
+                });
+            });
         }
     </script>
 </body>
