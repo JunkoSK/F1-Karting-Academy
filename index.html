@@ -1588,8 +1588,9 @@ const vipsContainer = document.getElementById('shop-vips');
                     const frame = player.frame || 'frame-dark';
                     const tag = player.vipTag ? `<span class="font-mono text-xs ${player.vipTagClass || 'text-primary-custom'} mr-1">${player.vipTag}</span>` : '';
                     
-                    // Hláška pod menom v úvodzovkách
+                    // Hláška v úvodzovkách umiestnená vedľa mena
                     const quote = player.quote ? `<span class="text-[10px] text-slate-400 italic ml-2">„${player.quote.replace(/^["„]|["“]$/g, '')}“</span>` : '';
+
                     list.innerHTML += `
                         <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border ${isCurrent ? 'border-primary-custom' : 'border-borderCol'}">
                             <div class="flex items-center gap-3">
@@ -1601,9 +1602,9 @@ const vipsContainer = document.getElementById('shop-vips');
                                     <div class="flex items-center flex-wrap">
                                         ${tag}
                                         <span class="font-bold text-white text-sm">${player.username}</span>
+                                        ${quote}
                                     </div>
                                     <span class="block text-[10px] text-slate-400">${player.title || 'Jazdec'}</span>
-                                    ${quote}
                                 </div>
                             </div>
                             <span class="font-extrabold text-primary-custom text-sm">${player.score || 0} ⭐</span>
@@ -1614,25 +1615,6 @@ const vipsContainer = document.getElementById('shop-vips');
                 list.innerHTML = '<div class="text-center text-red-400 text-sm py-4">Chyba pri načítavaní rebríčka.</div>';
             }
         }
-        function buyTagByIndex(index) {
-            const v = vipCatalog[index];
-            if (!v) return;
-
-            if (userData.coins >= v.price) {
-                playSound('buy');
-                userData.coins -= v.price;
-                if (!userData.inventory.includes(v.id)) {
-                    userData.inventory.push(v.id);
-                    userData.stats.itemsBought = (userData.stats.itemsBought || 0) + 1;
-                }
-                equipTagByIndex(index);
-                renderShop();
-            } else {
-                playSound('wrong');
-                alert("Nedostatok mincí!");
-            }
-        }
-
         function equipTagByIndex(index) {
             const v = vipCatalog[index];
             if (!v) return;
