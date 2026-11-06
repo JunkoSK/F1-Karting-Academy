@@ -498,15 +498,15 @@
             { id: "[COL]", type: "tag", label: "Franco Colapinto (Alpine)", price: 400, colorClass: "color-alpine" },
             { id: "[BOT]", type: "tag", label: "Valtteri Bottas (Cadillac)", price: 380, colorClass: "color-cadillac" },
             { id: "[PER]", type: "tag", label: "Sergio Pérez (Cadillac)", price: 400, colorClass: "color-cadillac" },
-            { id: "„Červené svetlá zhasli a máme odštartované!“", type: "quote", label: "🎙️ EisKing", price: 600 },
-            { id: "„Leave me alone, I know what I'm doing“", type: "quote", label: "💬 Kimi Räikkönen", price: 650 },
-            { id: "„Simply lovely!“", type: "quote", label: "💬 Max Verstappen", price: 600 },
-            { id: "„Hammer time!“", type: "quote", label: "💬 Bono / Hamilton", price: 600 },
-            { id: "„All the time you have to leave a space!“", type: "quote", label: "💬 Fernando Alonso", price: 700 },
-            { id: "„Box, box! Stay out, stay out!“", type: "quote", label: "💬 Ferrari Pit Wall", price: 750 },
-            { id: "„No Michael no, that is so not right!“", type: "quote", label: "💬 Toto Wolff", price: 800 },
-            { id: "„We look like a bunch of wankers“", type: "quote", label: "💬 Guenther Steiner", price: 850 },
-            { id: "„GP2 Engine... GP2 Engine!“", type: "quote", label: "💬 Fernando Alonso", price: 950 }
+            { index: 1, id: "Červené svetlá zhasli a máme odštartované!", type: "quote", label: "🎙️ EisKing", price: 600 },
+            { index: 2, id: "Leave me alone, I know what I'm doing", type: "quote", label: "💬 Kimi Räikkönen", price: 650 },
+            { index: 3, id: "Simply lovely!", type: "quote", label: "💬 Max Verstappen", price: 600 },
+            { index: 4, id: "Hammer time!", type: "quote", label: "💬 Bono / Hamilton", price: 600 },
+            { index: 5, id: "All the time you have to leave a space!", type: "quote", label: "💬 Fernando Alonso", price: 700 },
+            { index: 6, id: "Box, box! Stay out, stay out!", type: "quote", label: "💬 Ferrari Pit Wall", price: 750 },
+            { index: 7, id: "No Michael no, that is so not right!", type: "quote", label: "💬 Toto Wolff", price: 800 },
+            { index: 8, id: "We look like a bunch of wankers", type: "quote", label: "💬 Guenther Steiner", price: 850 },
+            { index: 9, id: "GP2 Engine... GP2 Engine!", type: "quote", label: "💬 Fernando Alonso", price: 950 }
         ];
 
         const questionsPool = [
@@ -1411,11 +1411,13 @@
                 `;
             });
 
-            const vipsContainer = document.getElementById('shop-vips');
+const vipsContainer = document.getElementById('shop-vips');
             vipsContainer.innerHTML = '';
-            vipCatalog.forEach(v => {
+            vipCatalog.forEach((v, idx) => {
+                const itemIndex = v.index !== undefined ? v.index : idx;
                 const owned = userData.inventory.includes(v.id);
                 const active = userData.vipTag === v.id || userData.quote === v.id;
+
                 vipsContainer.innerHTML += `
                     <div class="bg-darkBg p-3.5 rounded-2xl border border-borderCol flex justify-between items-center">
                         <div>
@@ -1424,8 +1426,8 @@
                         </div>
                         <div>
                             ${active ? '<span class="text-xs text-emerald-400 font-bold">Aktivované</span>' :
-                              owned ? `<button onclick="equipVip('${v.type}', ${JSON.stringify(v.id)}, '${v.colorClass || ''}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
-                              `<button onclick="buyVipItem('${v.type}', ${JSON.stringify(v.id)}, '${v.colorClass || ''}', ${v.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${v.price} 🪙</button>`}
+                              owned ? `<button onclick="equipVipByIndex(${itemIndex})" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
+                              `<button onclick="buyVipByIndex(${itemIndex})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${v.price} 🪙</button>`}
                         </div>
                     </div>
                 `;
@@ -1584,6 +1586,40 @@
             } catch (err) {
                 list.innerHTML = '<div class="text-center text-red-400 text-sm py-4">Chyba pri načítavaní rebríčka.</div>';
             }
+        }
+        function buyVipByIndex(index) {
+            const v = vipCatalog.find((item, idx) => (item.index !== undefined ? item.index : idx) === index);
+            if (!v) return;
+
+            if (userData.coins >= v.price) {
+                playSound('buy');
+                userData.coins -= v.price;
+                if (!userData.inventory.includes(v.id)) {
+                    userData.inventory.push(v.id);
+                    userData.stats.itemsBought = (userData.stats.itemsBought || 0) + 1;
+                }
+                equipVipByIndex(index);
+                renderShop();
+            } else {
+                playSound('wrong');
+                alert("Nedostatok mincí!");
+            }
+        }
+
+        function equipVipByIndex(index) {
+            const v = vipCatalog.find((item, idx) => (item.index !== undefined ? item.index : idx) === index);
+            if (!v) return;
+
+            playSound('click');
+            if (v.type === 'tag') {
+                userData.vipTag = (userData.vipTag === v.id) ? "" : v.id;
+                userData.vipTagClass = v.colorClass || '';
+            } else if (v.type === 'quote') {
+                userData.quote = (userData.quote === v.id) ? "" : v.id;
+            }
+            saveUserData();
+            updateProfileUI();
+            renderShop();
         }
     </script>
 </body>
