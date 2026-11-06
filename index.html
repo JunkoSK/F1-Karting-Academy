@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 & Karting Academy</title>
+    <!-- Favicon v tvare formulky -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏎️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
@@ -269,7 +271,7 @@
         <div id="leaderboard-list" class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1"></div>
     </div>
 
-    <!-- Firebase SDK skripty cez Modules -->
+    <!-- Firebase SDK skripty -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -287,7 +289,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Sprístupnenie funkcií pre globálne HTML onclick eventy
         window.dbTools = { ref, set, get, child, db };
     </script>
 
@@ -1002,7 +1003,7 @@
             { category: "Formula 1", question: "Kto drží rekord v počte získaných titulov majstra sveta F1 (spolu s Michaelom Schumacherom)?", options: ["Lewis Hamilton", "Max Verstappen", "Ayrton Senna", "Fernando Alonso"], correct: 0 }
         ];
 
-        let activeQuizQuestions = [];
+       let activeQuizQuestions = [];
         let currentQuestionIdx = 0;
         let questionStartTime = 0;
         let quizMode = 'karting';
@@ -1143,10 +1144,16 @@
             if (currentUser) {
                 const { db, ref, set } = window.dbTools;
                 set(ref(db, 'users/' + currentUser), userData);
+                // Ukladáme do rebríčka kompletné dáta pre profil, oramovanie a hlášky
                 set(ref(db, 'leaderboard/' + currentUser), {
                     username: currentUser,
                     score: userData.score || 0,
-                    title: userData.title
+                    title: userData.title,
+                    avatar: userData.avatar,
+                    frame: userData.frame,
+                    vipTag: userData.vipTag || '',
+                    vipTagClass: userData.vipTagClass || '',
+                    quote: userData.quote || ''
                 });
             }
         }
@@ -1172,12 +1179,21 @@
             updateProfileUI();
         }
 
+        function showScreen(screenId) {
+            const screens = ['auth-screen', 'main-menu', 'quiz-screen', 'shop-screen', 'achievements-screen', 'leaderboard-screen'];
+            screens.forEach(s => {
+                const el = document.getElementById(s);
+                if (el) el.classList.add('hidden');
+            });
+            const target = document.getElementById(screenId);
+            if (target) target.classList.remove('hidden');
+        }
+
         function startQuiz(mode) {
             playSound('click');
             playSound('pass_car');
             quizMode = mode;
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
+            showScreen('quiz-screen');
 
             let pool = [];
             if (mode === 'karting') {
@@ -1198,103 +1214,97 @@
         }
 
         function renderQuestion() {
-    hideQuizMessage();
-    const q = activeQuizQuestions[currentQuestionIdx];
-    document.getElementById('question-category').textContent = q.category.toUpperCase();
-    document.getElementById('current-q-num').textContent = currentQuestionIdx + 1;
-    document.getElementById('question-text').textContent = q.question;
+            hideQuizMessage();
+            const q = activeQuizQuestions[currentQuestionIdx];
+            document.getElementById('question-category').textContent = q.category.toUpperCase();
+            document.getElementById('current-q-num').textContent = currentQuestionIdx + 1;
+            document.getElementById('question-text').textContent = q.question;
 
-    questionStartTime = Date.now();
+            questionStartTime = Date.now();
 
-    // Vytvoríme pole objektov, kde spojíme text odpovede s informáciou, či bola pôvodne správna
-    let optionsWithMeta = q.options.map((opt, idx) => ({
-        text: opt,
-        isCorrect: idx === q.correct
-    }));
+            let optionsWithMeta = q.options.map((opt, idx) => ({
+                text: opt,
+                isCorrect: idx === q.correct
+            }));
 
-    // Náhodne premiešame poradie možností (Shuffle)
-    optionsWithMeta.sort(() => Math.random() - 0.5);
+            optionsWithMeta.sort(() => Math.random() - 0.5);
 
-    const container = document.getElementById('options-container');
-    container.innerHTML = '';
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
 
-    optionsWithMeta.forEach((optObj) => {
-        const btn = document.createElement('button');
-        btn.className = "w-full bg-darkBg hover:bg-slate-800 text-left p-4 rounded-xl border border-borderCol font-semibold transition text-sm flex items-center justify-between cursor-pointer";
-        btn.innerHTML = `<span>${optObj.text}</span>`;
-        
-        // Overujeme kliknutie na základe nového premiešaného poradia
-        btn.onclick = () => checkAnswerMixed(optObj.isCorrect, btn, optionsWithMeta);
-        container.appendChild(btn);
-    });
-}
-
-// Pomocná funkcia na vyhodnotenie premiešanej otázky
-function checkAnswerMixed(isCorrect, btnElement, optionsWithMeta) {
-    const responseTime = (Date.now() - questionStartTime) / 1000;
-    const cardBox = document.getElementById('quiz-card-box');
-
-    const allBtns = document.getElementById('options-container').querySelectorAll('button');
-    allBtns.forEach(b => b.disabled = true);
-
-    if (isCorrect) {
-        playSound('correct');
-        btnElement.classList.add('bg-emerald-600/30', 'border-emerald-500');
-
-        userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
-
-        let qScore = 30;
-        let qCoins = 4;
-        let speedText = "Štandardné tempo";
-
-        if (responseTime < 5.0) {
-            qScore = 70;
-            qCoins = 15;
-            speedText = "⚡ BLESKOVÁ POLE POSITION!";
-            userData.stats.lightningAnswers = (userData.stats.lightningAnswers || 0) + 1;
-        } else if (responseTime < 10.0) {
-            qScore = 50;
-            qCoins = 9;
-            speedText = "🔥 Skvelá rýchlosť v zákrute!";
+            optionsWithMeta.forEach((optObj) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-darkBg hover:bg-slate-800 text-left p-4 rounded-xl border border-borderCol font-semibold transition text-sm flex items-center justify-between cursor-pointer";
+                btn.innerHTML = `<span>${optObj.text}</span>`;
+                btn.onclick = () => checkAnswerMixed(optObj.isCorrect, btn, optionsWithMeta);
+                container.appendChild(btn);
+            });
         }
 
-        userData.coins += qCoins;
-        userData.score = (userData.score || 0) + qScore;
+        function checkAnswerMixed(isCorrect, btnElement, optionsWithMeta) {
+            const responseTime = (Date.now() - questionStartTime) / 1000;
+            const cardBox = document.getElementById('quiz-card-box');
 
-        cardBox.classList.add('anim-glow');
-        setTimeout(() => cardBox.classList.remove('anim-glow'), 300);
+            const allBtns = document.getElementById('options-container').querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
 
-        showQuizMessage(`✅ Správne! ${speedText}\n(+${qScore} ⭐, +${qCoins} 🪙)`, true);
-    } else {
-        playSound('wrong');
-        btnElement.classList.add('bg-red-600/30', 'border-red-500');
-        
-        // Označíme zelenou to tlačidlo, ktoré bolo reálne správne
-        allBtns.forEach((b, idx) => {
-            if (optionsWithMeta[idx].isCorrect) {
-                b.classList.add('bg-emerald-600/20', 'border-emerald-500');
+            if (isCorrect) {
+                playSound('correct');
+                btnElement.classList.add('bg-emerald-600/30', 'border-emerald-500');
+
+                userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
+
+                let qScore = 30;
+                let qCoins = 4;
+                let speedText = "Štandardné tempo";
+
+                if (responseTime < 5.0) {
+                    qScore = 70;
+                    qCoins = 15;
+                    speedText = "⚡ BLESKOVÁ POLE POSITION!";
+                    userData.stats.lightningAnswers = (userData.stats.lightningAnswers || 0) + 1;
+                } else if (responseTime < 10.0) {
+                    qScore = 50;
+                    qCoins = 9;
+                    speedText = "🔥 Skvelá rýchlosť v zákrute!";
+                }
+
+                userData.coins += qCoins;
+                userData.score = (userData.score || 0) + qScore;
+
+                cardBox.classList.add('anim-glow');
+                setTimeout(() => cardBox.classList.remove('anim-glow'), 300);
+
+                showQuizMessage(`✅ Správne! ${speedText}\n(+${qScore} ⭐, +${qCoins} 🪙)`, true);
+            } else {
+                playSound('wrong');
+                btnElement.classList.add('bg-red-600/30', 'border-red-500');
+                
+                allBtns.forEach((b, idx) => {
+                    if (optionsWithMeta[idx].isCorrect) {
+                        b.classList.add('bg-emerald-600/20', 'border-emerald-500');
+                    }
+                });
+
+                showQuizMessage(`❌ Nesprávne!`, false);
             }
-        });
 
-        showQuizMessage(`❌ Nesprávne!`, false);
-    }
-
-    setTimeout(() => {
-        currentQuestionIdx++;
-        if (currentQuestionIdx < activeQuizQuestions.length) {
-            renderQuestion();
-        } else {
-            userData.stats.quizzesCompleted = (userData.stats.quizzesCompleted || 0) + 1;
-            if (quizMode === 'karting') userData.stats.kartingCompleted = (userData.stats.kartingCompleted || 0) + 1;
-            if (quizMode === 'f1') userData.stats.f1Completed = (userData.stats.f1Completed || 0) + 1;
-            if (quizMode === 'mixed') userData.stats.mixedCompleted = (userData.stats.mixedCompleted || 0) + 1;
-            saveUserData();
-            playSound('pass_car');
-            showQuizMessage(`🏁 Kvíz úspešne dokončený!`, true);
-            setTimeout(() => returnToMenu(), 2500);
+            setTimeout(() => {
+                currentQuestionIdx++;
+                if (currentQuestionIdx < activeQuizQuestions.length) {
+                    renderQuestion();
+                } else {
+                    userData.stats.quizzesCompleted = (userData.stats.quizzesCompleted || 0) + 1;
+                    if (quizMode === 'karting') userData.stats.kartingCompleted = (userData.stats.kartingCompleted || 0) + 1;
+                    if (quizMode === 'f1') userData.stats.f1Completed = (userData.stats.f1Completed || 0) + 1;
+                    if (quizMode === 'mixed') userData.stats.mixedCompleted = (userData.stats.mixedCompleted || 0) + 1;
+                    saveUserData();
+                    playSound('pass_car');
+                    showQuizMessage(`🏁 Kvíz úspešne dokončený!`, true);
+                    setTimeout(() => returnToMenu(), 2500);
+                }
+            }, 1400);
         }
-    }, 1400);
-}
 
         function showQuizMessage(msg, isSuccess) {
             const m = document.getElementById('quiz-message');
@@ -1330,8 +1340,7 @@ function checkAnswerMixed(isCorrect, btnElement, optionsWithMeta) {
 
         function openShop() {
             playSound('click');
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('shop-screen').classList.remove('hidden');
+            showScreen('shop-screen');
             switchShopTab('titles');
             renderShop();
         }
@@ -1481,8 +1490,7 @@ function checkAnswerMixed(isCorrect, btnElement, optionsWithMeta) {
 
         function openAchievements() {
             playSound('click');
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('achievements-screen').classList.remove('hidden');
+            showScreen('achievements-screen');
             renderAchievements();
         }
 
@@ -1526,8 +1534,7 @@ function checkAnswerMixed(isCorrect, btnElement, optionsWithMeta) {
 
         async function openLeaderboard() {
             playSound('click');
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('leaderboard-screen').classList.remove('hidden');
+            showScreen('leaderboard-screen');
 
             const list = document.getElementById('leaderboard-list');
             list.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Načítavam rebríček...</div>';
@@ -1550,13 +1557,25 @@ function checkAnswerMixed(isCorrect, btnElement, optionsWithMeta) {
 
                 players.slice(0, 10).forEach((player, index) => {
                     const isCurrent = player.username === currentUser;
+                    const avatar = player.avatar || '🏎️';
+                    const frame = player.frame || 'frame-dark';
+                    const tag = player.vipTag ? `<span class="font-mono text-xs ${player.vipTagClass || 'text-primary-custom'} mr-1">${player.vipTag}</span>` : '';
+                    const quote = player.quote ? `<span class="block text-[10px] text-slate-400 italic">${player.quote}</span>` : '';
+
                     list.innerHTML += `
                         <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border ${isCurrent ? 'border-primary-custom' : 'border-borderCol'}">
                             <div class="flex items-center gap-3">
                                 <span class="font-extrabold text-sm text-primary-custom">${index + 1}.</span>
+                                <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-xl ${frame}">
+                                    <span>${avatar}</span>
+                                </div>
                                 <div>
-                                    <span class="font-bold text-white text-sm">${player.username}</span>
+                                    <div class="flex items-center flex-wrap">
+                                        ${tag}
+                                        <span class="font-bold text-white text-sm">${player.username}</span>
+                                    </div>
                                     <span class="block text-[10px] text-slate-400">${player.title || 'Jazdec'}</span>
+                                    ${quote}
                                 </div>
                             </div>
                             <span class="font-extrabold text-primary-custom text-sm">${player.score || 0} ⭐</span>
