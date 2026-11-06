@@ -269,6 +269,28 @@
         <div id="leaderboard-list" class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1"></div>
     </div>
 
+    <!-- Firebase SDK skripty cez Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNHKoHO426UEm-xW3F02z_s44dFMtH_n0",
+            authDomain: "f1-and-karting-academy.firebaseapp.com",
+            databaseURL: "https://f1-and-karting-academy-default-rtdb.firebaseio.com",
+            projectId: "f1-and-karting-academy",
+            storageBucket: "f1-and-karting-academy.firebasestorage.app",
+            messagingSenderId: "531787077252",
+            appId: "1:531787077252:web:9cc1446a52f28ba3f814d1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Sprístupnenie funkcií pre globálne HTML onclick eventy
+        window.dbTools = { ref, set, get, child, db };
+    </script>
+
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -540,7 +562,7 @@
             saveUserData();
         }
 
-        function handleAuth(e) {
+        async function handleAuth(e) {
             if (e) e.preventDefault();
             playSound('click');
             const usernameInput = document.getElementById('auth-username');
@@ -558,55 +580,62 @@
                 return false;
             }
 
-            const saved = localStorage.getItem('f1_karting_' + username);
+            const { db, ref, get } = window.dbTools;
+            const userRef = ref(db, 'users/' + username);
 
-            if (authMode === 'register') {
-                if (saved) {
-                    errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
-                    errorDiv.classList.remove('hidden');
-                    return false;
-                }
-                currentUser = username;
-                userData = {
-                    coins: 50,
-                    score: 0,
-                    title: "Nováčik na Traťi",
-                    avatar: "🏎️",
-                    frame: "frame-dark",
-                    vipTag: "",
-                    vipTagClass: "",
-                    quote: "",
-                    theme: "theme-red",
-                    password: password,
-                    inventory: ["Nováčik na Traťi", "🏎️", "frame-dark"],
-                    stats: { quizzesCompleted: 0, kartingCompleted: 0, f1Completed: 0, mixedCompleted: 0, totalCorrect: 0, lightningAnswers: 0, itemsBought: 0 },
-                    achievements: {}
-                };
-                saveUserData();
-            } else {
-                if (!saved) {
-                    errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
-                    errorDiv.classList.remove('hidden');
-                    return false;
-                }
-                currentUser = username;
-                try {
-                    const parsed = JSON.parse(saved);
-                    userData = { ...userData, ...parsed };
-                    if (password !== userData.password && userData.password) {
+            try {
+                const snapshot = await get(userRef);
+                const existingUser = snapshot.val();
+
+                if (authMode === 'register') {
+                    if (existingUser) {
+                        errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
+                        errorDiv.classList.remove('hidden');
+                        return false;
+                    }
+                    currentUser = username;
+                    userData = {
+                        coins: 50,
+                        score: 0,
+                        title: "Nováčik na Traťi",
+                        avatar: "🏎️",
+                        frame: "frame-dark",
+                        vipTag: "",
+                        vipTagClass: "",
+                        quote: "",
+                        theme: "theme-red",
+                        password: password,
+                        inventory: ["Nováčik na Traťi", "🏎️", "frame-dark"],
+                        stats: { quizzesCompleted: 0, kartingCompleted: 0, f1Completed: 0, mixedCompleted: 0, totalCorrect: 0, lightningAnswers: 0, itemsBought: 0 },
+                        achievements: {}
+                    };
+                    saveUserData();
+                } else {
+                    if (!existingUser) {
+                        errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
+                        errorDiv.classList.remove('hidden');
+                        return false;
+                    }
+                    if (existingUser.password && existingUser.password !== password) {
                         errorDiv.textContent = "Nesprávne heslo!";
                         errorDiv.classList.remove('hidden');
                         return false;
                     }
-                } catch(err) {}
+                    currentUser = username;
+                    userData = { ...userData, ...existingUser };
+                }
+
+                errorDiv.classList.add('hidden');
+                if (userData.theme) setTheme(userData.theme);
+
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-menu').classList.remove('hidden');
+                updateProfileUI();
+            } catch (err) {
+                errorDiv.textContent = "Chyba pripojenia k databáze!";
+                errorDiv.classList.remove('hidden');
             }
 
-            errorDiv.classList.add('hidden');
-            if (userData.theme) setTheme(userData.theme);
-
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-menu').classList.remove('hidden');
-            updateProfileUI();
             return false;
         }
 
@@ -641,7 +670,13 @@
 
         function saveUserData() {
             if (currentUser) {
-                localStorage.setItem('f1_karting_' + currentUser, JSON.stringify(userData));
+                const { db, ref, set } = window.dbTools;
+                set(ref(db, 'users/' + currentUser), userData);
+                set(ref(db, 'leaderboard/' + currentUser), {
+                    username: currentUser,
+                    score: userData.score || 0,
+                    title: userData.title
+                });
             }
         }
 
@@ -1002,21 +1037,48 @@
             renderAchievements();
         }
 
-        function openLeaderboard() {
+        async function openLeaderboard() {
             playSound('click');
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('leaderboard-screen').classList.remove('hidden');
 
             const list = document.getElementById('leaderboard-list');
-            list.innerHTML = `
-                <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border border-primary-custom">
-                    <div class="flex items-center gap-3">
-                        <span class="font-extrabold text-sm text-primary-custom">1.</span>
-                        <span class="font-bold text-white text-sm">${currentUser}</span>
-                    </div>
-                    <span class="font-extrabold text-primary-custom text-sm">${userData.score || 0} ⭐</span>
-                </div>
-            `;
+            list.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Načítavam rebríček...</div>';
+
+            const { db, ref, get } = window.dbTools;
+            try {
+                const snapshot = await get(ref(db, 'leaderboard'));
+                list.innerHTML = '';
+                let players = [];
+                snapshot.forEach((child) => {
+                    players.push(child.val());
+                });
+
+                players.sort((a, b) => b.score - a.score);
+
+                if (players.length === 0) {
+                    list.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Zatiaľ žiadni hráči v rebríčku.</div>';
+                    return;
+                }
+
+                players.slice(0, 10).forEach((player, index) => {
+                    const isCurrent = player.username === currentUser;
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border ${isCurrent ? 'border-primary-custom' : 'border-borderCol'}">
+                            <div class="flex items-center gap-3">
+                                <span class="font-extrabold text-sm text-primary-custom">${index + 1}.</span>
+                                <div>
+                                    <span class="font-bold text-white text-sm">${player.username}</span>
+                                    <span class="block text-[10px] text-slate-400">${player.title || 'Jazdec'}</span>
+                                </div>
+                            </div>
+                            <span class="font-extrabold text-primary-custom text-sm">${player.score || 0} ⭐</span>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                list.innerHTML = '<div class="text-center text-red-400 text-sm py-4">Chyba pri načítavaní rebríčka.</div>';
+            }
         }
     </script>
 </body>
