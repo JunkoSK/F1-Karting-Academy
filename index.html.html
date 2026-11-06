@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 & Karting Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--color-primary)',
+                        primaryDark: 'var(--color-primary-dark)',
+                        darkBg: '#090d16',
+                        cardBg: '#111827',
+                        borderCol: '#1f2937'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --color-primary: #ef4444;
+            --color-primary-dark: #dc2626;
+            --theme-glow: rgba(239, 68, 68, 0.1);
+        }
+
+        .theme-red { --color-primary: #ef4444; --color-primary-dark: #dc2626; --theme-glow: rgba(239, 68, 68, 0.1); }
+        .theme-blue { --color-primary: #3b82f6; --color-primary-dark: #2563eb; --theme-glow: rgba(59, 130, 246, 0.1); }
+        .theme-yellow { --color-primary: #eab308; --color-primary-dark: #ca8a04; --theme-glow: rgba(234, 179, 8, 0.1); }
+        .theme-green { --color-primary: #10b981; --color-primary-dark: #059669; --theme-glow: rgba(16, 185, 129, 0.1); }
+
+        .text-primary-custom { color: var(--color-primary); }
+        .bg-primary-custom { background-color: var(--color-primary); }
+        .border-primary-custom { border-color: var(--color-primary); }
+
+        .color-mclaren { color: #ff8000; }
+        .color-mercedes { color: #27f4d2; }
+        .color-redbull { color: #3671c6; }
+        .color-ferrari { color: #e8002d; }
+        .color-williams { color: #64c4ff; }
+        .color-rb { color: #6692ff; }
+        .color-aston { color: #229971; }
+        .color-haas { color: #b6babd; }
+        .color-audi { color: #52e252; }
+        .color-alpine { color: #0093cc; }
+        .color-cadillac { color: #f59e0b; }
+
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+        *::-webkit-scrollbar { display: none; }
+
+        .frame-dark { border: 3px solid #4b5563; }
+        .frame-f1-red { border: 3px solid #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.7); }
+        .frame-checkered { border: 3px dashed #f9fafb; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+        .frame-carbon { border: 3px solid #111827; outline: 2px solid #374151; }
+        .frame-pirelli-soft { border: 3px solid #dc2626; box-shadow: 0 0 15px rgba(220, 38, 38, 0.8); }
+        .frame-pirelli-medium { border: 3px solid #eab308; box-shadow: 0 0 15px rgba(234, 179, 8, 0.8); }
+        .frame-pirelli-hard { border: 3px solid #f8fafc; box-shadow: 0 0 15px rgba(248, 250, 252, 0.7); }
+        .frame-neon-apex { border: 3px solid #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.8); }
+        .frame-monaco-gold { border: 3px solid #f59e0b; box-shadow: 0 0 18px rgba(245, 158, 11, 0.9); }
+        .frame-cyber-kart { border: 3px solid #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.8); }
+        .frame-ferrari-fire { border: 3px solid #b91c1c; outline: 2px solid #f59e0b; }
+        .frame-mercedes-silver { border: 3px solid #94a3b8; box-shadow: 0 0 12px rgba(148, 163, 184, 0.8); }
+        .frame-redbull-blue { border: 3px solid #1d4ed8; box-shadow: 0 0 15px rgba(29, 78, 216, 0.8); }
+        .frame-mclaren-papaya { border: 3px solid #f97316; box-shadow: 0 0 15px rgba(249, 115, 22, 0.8); }
+        .frame-champion-rainbow { border: 3px solid #eab308; outline: 2px dashed #ef4444; box-shadow: 0 0 20px rgba(234, 179, 8, 0.9); }
+
+        .bg-animated {
+            background: radial-gradient(circle at 20% 20%, var(--theme-glow) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+                        #090d16;
+            background-size: 150% 150%;
+            animation: ambientMove 14s ease-in-out infinite alternate;
+        }
+
+        @keyframes ambientMove {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        .anim-glow { animation: pulseGlow 0.3s ease-in-out; }
+
+        /* Šachovnicový efekt pozadia hlavičky */
+        .checkered-banner {
+            background: repeating-linear-gradient(45deg, #111827, #111827 10px, #1f2937 10px, #1f2937 20px);
+            border-bottom: 2px dashed var(--color-primary);
+        }
+    </style>
+</head>
+<body id="app-body" class="theme-red bg-animated text-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
+
+    <!-- Auth Container -->
+    <div id="auth-screen" class="w-full max-w-md bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-500 tracking-wider mb-2">🏎️ F1 & KARTING</h1>
+            <p class="text-slate-400 text-xs">Zaregistruj sa alebo sa prihlás pre vstup do garáže.</p>
+        </div>
+
+        <div class="flex gap-2 mb-6 bg-darkBg p-1.5 rounded-2xl border border-borderCol text-xs font-bold">
+            <button type="button" onclick="switchAuthMode('login')" id="tab-login-btn" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white">Prihlásiť sa</button>
+            <button type="button" onclick="switchAuthMode('register')" id="tab-register-btn" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">Registrovať sa</button>
+        </div>
+
+        <form id="auth-form" class="space-y-4" onsubmit="handleAuth(event)">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Herné meno</label>
+                <input type="text" id="auth-username" required class="w-full bg-darkBg border border-borderCol rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 transition text-sm" placeholder="napr. RacerSk">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Heslo</label>
+                <input type="password" id="auth-password" required class="w-full bg-darkBg border border-borderCol rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 transition text-sm" placeholder="••••••••">
+            </div>
+            <div id="auth-error-msg" class="text-red-400 text-xs text-center hidden font-bold"></div>
+            <button type="submit" id="auth-submit-btn" class="w-full bg-primary-custom hover:opacity-95 text-white font-extrabold py-3.5 rounded-xl transition shadow-lg mt-2 text-sm">Vstúpiť do Garáže</button>
+        </form>
+    </div>
+
+    <!-- Main Game Menu -->
+    <div id="main-menu" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10 overflow-hidden">
+        <!-- Šachovnicový efekt v hornej časti menu -->
+        <div class="checkered-banner -mx-8 -mt-8 p-3 mb-6 flex justify-between items-center px-6">
+            <span class="text-xs font-extrabold tracking-widest text-white uppercase drop-shadow">🏁 F1 & KARTING ACADEMY 🏁</span>
+            <span class="text-xs text-yellow-400 font-bold">VIP Garáž</span>
+        </div>
+
+        <div class="flex justify-between items-center mb-4 bg-darkBg/60 p-3 rounded-2xl border border-borderCol">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Farebný štýl garáže:</span>
+            <div class="flex gap-2">
+                <button onclick="setTheme('theme-red')" class="w-6 h-6 rounded-full bg-red-500 border-2 border-white hover:scale-110 transition" title="Červená"></button>
+                <button onclick="setTheme('theme-blue')" class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white hover:scale-110 transition" title="Modrá"></button>
+                <button onclick="setTheme('theme-yellow')" class="w-6 h-6 rounded-full bg-yellow-400 border-2 border-white hover:scale-110 transition" title="Žltá"></button>
+                <button onclick="setTheme('theme-green')" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white hover:scale-110 transition" title="Zelená"></button>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-6 pb-6 border-b border-borderCol">
+            <div class="flex items-center gap-4">
+                <div id="user-avatar-box" class="w-16 h-16 rounded-2xl bg-slate-800/80 flex items-center justify-center text-3xl frame-dark transition-all">
+                    <span id="user-avatar-icon">🏎️</span>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white flex items-center gap-1.5 flex-wrap">
+                        <span id="user-vip-prefix" class="font-mono text-sm hidden"></span>
+                        <span id="user-display-name">Jazdec</span>
+                        <span id="user-quote-suffix" class="text-xs text-slate-400 italic hidden font-normal"></span>
+                    </h2>
+                    <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                        <span class="bg-slate-800 text-slate-200 text-xs px-3 py-0.5 rounded-full font-bold border border-borderCol" id="user-title-badge">Nováčik na Traťi</span>
+                        <span class="text-yellow-400 text-sm font-bold flex items-center gap-1">🪙 <span id="user-coins">50</span></span>
+                        <span class="text-slate-300 text-sm font-bold flex items-center gap-1">⭐ <span id="user-score">0</span> b.</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="logout()" class="text-slate-400 hover:text-red-400 text-sm font-semibold transition bg-slate-800/50 px-3 py-1.5 rounded-xl border border-borderCol">Odhlásiť</button>
+        </div>
+
+        <div class="space-y-3 mb-6">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Vyber si kategóriu / mód (10 otázok)</h3>
+            <button onclick="startQuiz('karting')" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold py-3.5 px-5 rounded-2xl transition border border-borderCol flex justify-between items-center text-left group">
+                <div>
+                    <div class="text-base group-hover:text-emerald-400 transition-colors">🟢 Motokárová Škola</div>
+                    <div class="text-xs text-slate-400">Pravidlá na trati, vlajky, stopa a základy predbiehania</div>
+                </div>
+                <span class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-lg border border-emerald-500/30">10 Otázok</span>
+            </button>
+            
+            <button onclick="startQuiz('f1')" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold py-3.5 px-5 rounded-2xl transition border border-borderCol flex justify-between items-center text-left group">
+                <div>
+                    <div class="text-base group-hover:text-primary-custom transition-colors">🔴 Formula 1 Expert</div>
+                    <div class="text-xs text-slate-400">Pravidlá DRS, stratégie pneumatík a história</div>
+                </div>
+                <span class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-lg border border-borderCol">10 Otázok</span>
+            </button>
+
+            <button onclick="startQuiz('mixed')" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold py-3.5 px-5 rounded-2xl transition border border-borderCol flex justify-between items-center text-left group">
+                <div>
+                    <div class="text-base group-hover:text-amber-400 transition-colors">⚡ Veľká Cena (Zmiešaný špeciál)</div>
+                    <div class="text-xs text-slate-400">10 náročných otázok z celého motorsportu</div>
+                </div>
+                <span class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-lg border border-amber-500/30">10 Otázok</span>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+            <button onclick="openShop()" class="bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 font-bold py-3 px-2 rounded-2xl transition border border-borderCol text-center text-xs">🛒 Obchod</button>
+            <button onclick="openAchievements()" class="bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 font-bold py-3 px-2 rounded-2xl transition border border-borderCol text-center text-xs flex items-center justify-center gap-1">🏅 Úspechy</button>
+            <button onclick="openLeaderboard()" class="bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 font-bold py-3 px-2 rounded-2xl transition border border-borderCol text-center text-xs">🏆 Rebríček</button>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10">
+        <div class="flex justify-between items-center mb-6">
+            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm">← Späť do garáže</button>
+            <div class="text-sm font-bold text-primary-custom flex items-center gap-2">
+                <span id="quiz-mode-label">Motokáry</span>
+            </div>
+        </div>
+
+        <div id="quiz-card-box" class="bg-darkBg p-6 rounded-2xl border border-borderCol mb-6 transition-all">
+            <div class="flex justify-between text-xs text-slate-400 font-bold mb-2">
+                <span id="question-category">KATEGÓRIA</span>
+                <span>Otázka <span id="current-q-num">1</span>/10</span>
+            </div>
+            <h3 id="question-text" class="text-lg font-bold text-white mb-2">Načítavam otázku...</h3>
+        </div>
+
+        <div id="options-container" class="space-y-3 mb-6"></div>
+
+        <div id="quiz-message" class="hidden mb-4 p-3.5 rounded-2xl text-center text-sm font-bold animate-pulse"></div>
+
+        <div class="flex justify-between items-center text-xs text-slate-400 border-t border-borderCol pt-4">
+            <span class="text-yellow-400 font-bold">Mince: 🪙 <span id="quiz-user-coins">50</span></span>
+            <button onclick="buyQuizHint()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-borderCol px-3 py-1.5 rounded-xl font-semibold transition">💡 Nápoveda (-15 🪙)</button>
+        </div>
+    </div>
+
+    <!-- Shop Screen -->
+    <div id="shop-screen" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-white">Pit-Stop Obchod</h2>
+            <div class="text-yellow-400 text-sm font-bold bg-darkBg px-3 py-1 rounded-xl border border-borderCol">🪙 <span id="shop-user-coins">50</span></div>
+            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm">Zavrieť</button>
+        </div>
+
+        <div class="flex gap-2 mb-6 bg-darkBg p-1.5 rounded-2xl border border-borderCol text-xs font-bold">
+            <button onclick="switchShopTab('titles')" id="tab-titles" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white">🏷️ Tituly</button>
+            <button onclick="switchShopTab('avatars')" id="tab-avatars" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">🪖 Helmy</button>
+            <button onclick="switchShopTab('frames')" id="tab-frames" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">🖼️ Rámčeky</button>
+            <button onclick="switchShopTab('vips')" id="tab-vips" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">⭐ VIP</button>
+        </div>
+
+        <div class="max-h-[380px] overflow-y-auto pr-1">
+            <div id="shop-content-titles" class="space-y-2"><div id="shop-titles" class="space-y-2"></div></div>
+            <div id="shop-content-avatars" class="hidden"><div class="grid grid-cols-4 gap-3" id="shop-avatars"></div></div>
+            <div id="shop-content-frames" class="hidden"><div class="space-y-2.5" id="shop-frames"></div></div>
+            <div id="shop-content-vips" class="hidden space-y-4"><div class="space-y-2.5" id="shop-vips"></div></div>
+        </div>
+    </div>
+
+    <!-- Achievements Screen -->
+    <div id="achievements-screen" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-xl font-bold text-white">🏅 Úspechy</h2>
+                <p class="text-xs text-slate-400">Splň výzvy a získaj odmeny</p>
+            </div>
+            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm">Zavrieť</button>
+        </div>
+        <div id="achievements-list" class="space-y-3 max-h-[440px] overflow-y-auto pr-1"></div>
+    </div>
+
+    <!-- Leaderboard Screen -->
+    <div id="leaderboard-screen" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-white">🏆 Rebríček</h2>
+            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm">Zavrieť</button>
+        </div>
+        <div id="leaderboard-list" class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1"></div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const now = audioCtx.currentTime;
+
+            if (type === 'pass_car') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.exponentialRampToValueAtTime(320, now + 0.3);
+                osc.frequency.exponentialRampToValueAtTime(90, now + 0.8);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(800, now);
+                filter.frequency.exponentialRampToValueAtTime(200, now + 0.8);
+
+                gain.gain.setValueAtTime(0.01, now);
+                gain.gain.linearRampToValueAtTime(0.25, now + 0.3);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.8);
+            } else if (type === 'correct') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'wrong') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'buy') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.12);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'click') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, now);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+        }
+
+        let currentUser = null;
+        let authMode = 'login';
+
+        let userData = {
+            coins: 50,
+            score: 0,
+            title: "Nováčik na Traťi",
+            avatar: "🏎️",
+            frame: "frame-dark",
+            vipTag: "",
+            vipTagClass: "",
+            quote: "",
+            theme: "theme-red",
+            inventory: ["Nováčik na Traťi", "🏎️", "frame-dark"],
+            stats: { quizzesCompleted: 0, kartingCompleted: 0, f1Completed: 0, mixedCompleted: 0, totalCorrect: 0, lightningAnswers: 0, itemsBought: 0 },
+            achievements: {}
+        };
+
+        const achievementsCatalog = [
+            { id: "first_login", title: "Prvý štart", desc: "Prihlás sa a vstúp do garáže.", reward: 20, check: (s) => true },
+            { id: "first_quiz", title: "Zahrievacie kolo", desc: "Dokonči svoj prvý ľubovoľný kvíz.", reward: 30, check: (s) => s.quizzesCompleted >= 1 },
+            { id: "karting_1", title: "Motokárový učeň", desc: "Dokonči kategóriu Motokárová škola.", reward: 40, check: (s) => s.kartingCompleted >= 1 },
+            { id: "f1_1", title: "Fanúšik boxov", desc: "Dokonči kategóriu Formula 1 Expert.", reward: 40, check: (s) => s.f1Completed >= 1 },
+            { id: "mixed_1", title: "Skúšobná jazda", desc: "Dokonči kategóriu Veľká Cena.", reward: 40, check: (s) => s.mixedCompleted >= 1 },
+            { id: "correct_5", title: "Správny smer", desc: "Zaznamenaj celkovo 5 správnych odpovedí.", reward: 50, check: (s) => s.totalCorrect >= 5 },
+            { id: "shop_1", title: "Prvý nákup v Pitoch", desc: "Kúp si svoju prvú vec v obchode.", reward: 60, check: (s) => s.itemsBought >= 1 },
+            { id: "correct_15", title: "Istá ruka", desc: "Zaznamenaj celkovo 15 správnych odpovedí.", reward: 80, check: (s) => s.totalCorrect >= 15 },
+            { id: "quizzes_3", title: "Trikrát a dost", desc: "Dokonči spolu 3 kvízy.", reward: 90, check: (s) => s.quizzesCompleted >= 3 },
+            { id: "karting_3", title: "Motokárový šampión", desc: "Dokonči Motokárovú školu 3-krát.", reward: 100, check: (s) => s.kartingCompleted >= 3 },
+            { id: "f1_3", title: "Znalec paddocku", desc: "Dokonči F1 Expert 3-krát.", reward: 100, check: (s) => s.f1Completed >= 3 },
+            { id: "correct_30", title: "Taktický prehľad", desc: "Zaznamenaj celkovo 30 správnych odpovedí.", reward: 150, check: (s) => s.totalCorrect >= 30 },
+            { id: "shop_3", title: "Zberateľ heliem", desc: "Kúp si aspoň 3 položky v obchode.", reward: 150, check: (s) => s.itemsBought >= 3 },
+            { id: "quizzes_5", title: "Pravidelný tréning", desc: "Dokonči spolu 5 kvízov.", reward: 180, check: (s) => s.quizzesCompleted >= 5 },
+            { id: "mixed_3", title: "Vládca Veľkej Ceny", desc: "Dokonči Veľkú Cenu 3-krát.", reward: 200, check: (s) => s.mixedCompleted >= 3 },
+            { id: "correct_50", title: "Inžinier dát", desc: "Zaznamenaj celkovo 50 správnych odpovedí.", reward: 250, check: (s) => s.totalCorrect >= 50 },
+            { id: "quizzes_10", title: "Skúsený pilot", desc: "Dokonči spolu 10 kvízov.", reward: 300, check: (s) => s.quizzesCompleted >= 10 },
+            { id: "shop_6", title: "Bohatá výbava", desc: "Kúp si aspoň 6 položiek v obchode.", reward: 350, check: (s) => s.itemsBought >= 6 },
+            { id: "correct_80", title: "Chodiaca encyklopédia", desc: "Zaznamenaj celkovo 80 správnych odpovedí.", reward: 400, check: (s) => s.totalCorrect >= 80 },
+            { id: "karting_10", title: "Legenda motokár", desc: "Dokonči Motokárovú školu 10-krát.", reward: 450, check: (s) => s.kartingCompleted >= 10 },
+            { id: "f1_10", title: "Prezident FIA", desc: "Dokonči F1 Expert 10-krát.", reward: 450, check: (s) => s.f1Completed >= 10 },
+            { id: "quizzes_20", title: "Nezastaviteľný", desc: "Dokonči spolu 20 kvízov.", reward: 600, check: (s) => s.quizzesCompleted >= 20 },
+            { id: "correct_120", title: "Majster sveta", desc: "Zaznamenaj celkovo 120 správnych odpovedí.", reward: 700, check: (s) => s.totalCorrect >= 120 },
+            { id: "shop_10", title: "Majiteľ garáže", desc: "Kúp si aspoň 10 položiek v obchode.", reward: 750, check: (s) => s.itemsBought >= 10 },
+            { id: "mixed_10", title: "Vládca tratí", desc: "Dokonči Veľkú Cenu 10-krát.", reward: 800, check: (s) => s.mixedCompleted >= 10 },
+            { id: "correct_180", title: "Absolútny génius", desc: "Zaznamenaj celkovo 180 správnych odpovedí.", reward: 1000, check: (s) => s.totalCorrect >= 180 },
+            { id: "quizzes_35", title: "Legenda akadémie", desc: "Dokonči spolu 35 kvízov.", reward: 1200, check: (s) => s.quizzesCompleted >= 35 },
+            { id: "ultimate_hall", title: "Sien slávy F1", desc: "Splň všetky ostatné úspechy a ovládni akadémiu.", reward: 2000, check: (s) => s.quizzesCompleted >= 50 && s.totalCorrect >= 250 }
+        ];
+
+        const titlesCatalog = [
+            { id: "Nováčik na Traťi", price: 0 },
+            { id: "Svietič na Semafore", price: 80 },
+            { id: "Kráľ Kačírku", price: 120 },
+            { id: "Mechanik v Depách", price: 150 },
+            { id: "Guma na Asfalte", price: 180 },
+            { id: "Traťový Komisár", price: 220 },
+            { id: "Špecialista na DRS", price: 260 },
+            { id: "Majster Apexu", price: 300 },
+            { id: "Kráľ Mokrej Trate", price: 350 },
+            { id: "Pit-Stop Legend", price: 400 },
+            { id: "Strategista Scuderie", price: 480 },
+            { id: "Legenda Monaka", price: 550 },
+            { id: "Vládca Spa-Francorchamps", price: 650 },
+            { id: "Šampión Pohára", price: 750 },
+            { id: "Absolútna Legenda F1", price: 950 }
+        ];
+
+        const avatarsCatalog = [
+            { icon: "🏎️", price: 0 },
+            { icon: "🪖", price: 100 },
+            { icon: "🏁", price: 120 },
+            { icon: "🛞", price: 140 },
+            { icon: "🏆", price: 180 },
+            { icon: "🥇", price: 200 },
+            { icon: "⏱️", price: 220 },
+            { icon: "⛽", price: 250 },
+            { icon: "🚩", price: 280 },
+            { icon: "🚦", price: 300 },
+            { icon: "🛠️", price: 350 },
+            { icon: "🕶️", price: 400 },
+            { icon: "🧊", price: 450 },
+            { icon: "🦁", price: 500 },
+            { icon: "👑", price: 650 }
+        ];
+
+        const framesCatalog = [
+            { name: "Sivý Štandard", class: "frame-dark", price: 0 },
+            { name: "F1 Červený Plameň", class: "frame-f1-red", price: 200 },
+            { name: "Šachovnicový Cieľ", class: "frame-checkered", price: 250 },
+            { name: "Karbónové Vlákno", class: "frame-carbon", price: 300 },
+            { name: "Pirelli Red (Soft)", class: "frame-pirelli-soft", price: 350 },
+            { name: "Pirelli Yellow (Medium)", class: "frame-pirelli-medium", price: 350 },
+            { name: "Pirelli White (Hard)", class: "frame-pirelli-hard", price: 350 },
+            { name: "Neónový Apex", class: "frame-neon-apex", price: 400 },
+            { name: "Zlato z Monaka", class: "frame-monaco-gold", price: 480 },
+            { name: "Kyber Karting", class: "frame-cyber-kart", price: 550 },
+            { name: "Ferrari Ohnivý", class: "frame-ferrari-fire", price: 650 },
+            { name: "Strieborné Šípy", class: "frame-mercedes-silver", price: 720 },
+            { name: "Red Bull Modrá", class: "frame-redbull-blue", price: 800 },
+            { name: "McLaren Papaya", class: "frame-mclaren-papaya", price: 880 },
+            { name: "Dúhový Šampión", class: "frame-champion-rainbow", price: 1050 }
+        ];
+
+        const vipCatalog = [
+            { id: "[NOR]", type: "tag", label: "Lando Norris (McLaren)", price: 400, colorClass: "color-mclaren" },
+            { id: "[PIA]", type: "tag", label: "Oscar Piastri (McLaren)", price: 450, colorClass: "color-mclaren" },
+            { id: "[RUS]", type: "tag", label: "George Russell (Mercedes)", price: 450, colorClass: "color-mercedes" },
+            { id: "[ANT]", type: "tag", label: "Andrea Kimi Antonelli (Mercedes)", price: 450, colorClass: "color-mercedes" },
+            { id: "[VER]", type: "tag", label: "Max Verstappen (Red Bull Racing)", price: 400, colorClass: "color-redbull" },
+            { id: "[HAD]", type: "tag", label: "Isack Hadjar (Red Bull Racing)", price: 400, colorClass: "color-redbull" },
+            { id: "[LEC]", type: "tag", label: "Charles Leclerc (Ferrari)", price: 400, colorClass: "color-ferrari" },
+            { id: "[HAM]", type: "tag", label: "Lewis Hamilton (Ferrari)", price: 400, colorClass: "color-ferrari" },
+            { id: "[SAI]", type: "tag", label: "Carlos Sainz (Williams)", price: 450, colorClass: "color-williams" },
+            { id: "[ALB]", type: "tag", label: "Alexander Albon (Williams)", price: 400, colorClass: "color-williams" },
+            { id: "[LAW]", type: "tag", label: "Liam Lawson (Racing Bulls)", price: 400, colorClass: "color-rb" },
+            { id: "[LIN]", type: "tag", label: "Arvid Lindblad (Racing Bulls)", price: 400, colorClass: "color-rb" },
+            { id: "[ALO]", type: "tag", label: "Fernando Alonso (Aston Martin)", price: 500, colorClass: "color-aston" },
+            { id: "[STR]", type: "tag", label: "Lance Stroll (Aston Martin)", price: 400, colorClass: "color-aston" },
+            { id: "[OCO]", type: "tag", label: "Esteban Ocon (Haas)", price: 380, colorClass: "color-haas" },
+            { id: "[BEA]", type: "tag", label: "Oliver Bearman (Haas)", price: 400, colorClass: "color-haas" },
+            { id: "[HUL]", type: "tag", label: "Nico Hülkenberg (Audi)", price: 400, colorClass: "color-audi" },
+            { id: "[BOR]", type: "tag", label: "Gabriel Bortoleto (Audi)", price: 400, colorClass: "color-audi" },
+            { id: "[GAS]", type: "tag", label: "Pierre Gasly (Alpine)", price: 380, colorClass: "color-alpine" },
+            { id: "[COL]", type: "tag", label: "Franco Colapinto (Alpine)", price: 400, colorClass: "color-alpine" },
+            { id: "[BOT]", type: "tag", label: "Valtteri Bottas (Cadillac)", price: 380, colorClass: "color-cadillac" },
+            { id: "[PER]", type: "tag", label: "Sergio Pérez (Cadillac)", price: 400, colorClass: "color-cadillac" },
+            { id: "\"Červené svetlá zhasli a máme odštartované!\"", type: "quote", label: "🎙️ EisKing", price: 600 },
+            { id: "\"Leave me alone, I know what I'm doing\"", type: "quote", label: "💬 Kimi Räikkönen", price: 650 },
+            { id: "\"Simply lovely!\"", type: "quote", label: "💬 Max Verstappen", price: 600 },
+            { id: "\"Hammer time!\"", type: "quote", label: "💬 Bono / Hamilton", price: 600 },
+            { id: "\"All the time you have to leave a space!\"", type: "quote", label: "💬 Fernando Alonso", price: 700 },
+            { id: "\"Box, box! Stay out, stay out!\"", type: "quote", label: "💬 Ferrari Pit Wall", price: 750 },
+            { id: "\"No Michael no, that is so not right!\"", type: "quote", label: "💬 Toto Wolff", price: 800 },
+            { id: "\"We look like a bunch of wankers\"", type: "quote", label: "💬 Guenther Steiner", price: 850 },
+            { id: "\"GP2 Engine... GP2 Engine!\"", type: "quote", label: "💬 Fernando Alonso", price: 950 }
+        ];
+
+        const questionsPool = [
+            { category: "Motokáry", question: "Čo znamená ŽLTÁ vlajka na motokárovej trati?", options: ["Zrýchli a predbiehaj", "Nebezpečenstvo na trati, zákaz predbiehania", "Koniec pretekov", "Okamžite zajdi do depa"], correct: 1 },
+            { category: "Motokáry", question: "Aká je ideálna stopa pri prejazde štandardnej zákruty?", options: ["Vnútro - Vnútro - Vnútro", "Vonkajšok - Vnútro (Apex) - Vonkajšok", "Vonkajšok - Vonkajšok - Vonkajšok", "Zik-zak po celej trati"], correct: 1 },
+            { category: "Motokáry", question: "Čo sa stane, ak v motokáre súčasne prudko stlačíš plyn aj brzdu?", options: ["Motokára vyletí do vzduchu", "Znižuješ rýchlosť a môžeš poškodiť spojku/brzdy", "Zapne sa turbo", "Nic, je to bežná technika"], correct: 1 },
+            { category: "Motokáry", question: "Čo znamená MODRÁ vlajka ukazovaná motokárovi?", options: ["Máš poruchu", "Za tebou je rýchlejší jazdec o kolo, pusť ho", "Vyhral si preteky", "Trasa je mokrá"], correct: 1 },
+            { category: "Motokáry", question: "Prečo je dôležité zahriať pneumatiky pred rýchlym kolom v motokáre?", options: ["Aby mali krajšiu farbu", "Zvyšuje sa tým priľnavosť gumy k asfaltu", "Aby sa rýchlejšie spotreboval benzín", "Nemá to žiaden význam"], correct: 1 },
+            { category: "Motokáry", question: "Aký typ motora sa najčastejšie používa v hobby pretekárskych motokárach?", options: ["Dvojtaktný benzínový motor", "Elektromotor z Tesly", "Naftový motor V6", "Parný kotol"], correct: 0 },
+            { category: "Motokáry", question: "Akú funkciu má rebrovaný chránič rebier v motokárovej výstroji?", options: ["Chráni pred chladom", "Tlmi nárazy a bočné preťaženie v zákrutách", "Zlepšuje aerodynamiku", "Slúži na uchytenie kamery"], correct: 1 },
+            { category: "Motokáry", question: "Čo znamená ČERVENÁ vlajka na trati?", options: ["Okamžité zastavenie pretekov / tréningu", "Voľná trať", "Posledné kolo", "Pozor, olej na trati"], correct: 0 },
+            { category: "Motokáry", question: "Ako sa nazýva bod v strede zákruty, kde sa motokára najbližšie priblíži k obrubníku?", options: ["Apex", "Pirelli bod", "Kľúčový bod", "Rýchly bod"], correct: 0 },
+            { category: "Motokáry", question: "Čo signalizuje ČIERNO-BIELE šachovnicová vlajka?", options: ["Štart pretekov", "Koniec pretekov alebo tréningu", "Trest pre jazdca", "Porucha motora"], correct: 1 },
+            { category: "Formula 1", question: "Kedy môže jazdec v F1 použiť systém DRS počas pretekov?", options: ["Kedykoľvek chce", "Ak je menej ako 1 sekundu za jazdcom v DRS zóne", "Iba v prvej zákrute po štarte", "Keď prší"], correct: 1 },
+            { category: "Formula 1", question: "Čo znamená ČERVENÁ vlajka počas pretekov F1?", options: ["Posledné kolo", "Preteky sú prerušené, jazdci musia pomaly zájsť do pit lane", "Pena na trati", "Koniec kvalifikácie"], correct: 1 },
+            { category: "Formula 1", question: "Koľko zmesí suchých pneumatík (Slick) prináša Pirelli na každý víkend F1?", options: ["2 (Mäkká, Tvrdá)", "3 (Soft, Medium, Hard)", "5 zmesí", "1 univerzálnu"], correct: 1 },
+            { category: "Formula 1", question: "Čo označuje skratka ERS v modernom monopole F1?", options: ["Engine Race System", "Energy Recovery System", "Emergency Rescue Safety", "Electronic Rear Spoiler"], correct: 1 },
+            { category: "Formula 1", question: "Ktorý tím sídli v Maranelle v Taliansku?", options: ["Mercedes", "Red Bull", "Ferrari", "McLaren"], correct: 2 },
+            { category: "Formula 1", question: "Aká je minimálna hmotnosť monopostu F1 vrátane jazdca (bez paliva)?", options: ["Cez 798 kg", "Okolo 500 kg", "Presne 1000 kg", "350 kg"], correct: 0 },
+            { category: "Formula 1", question: "Koľko bodov získava víťaz hlavných pretekov F1?", options: ["25 bodov", "10 bodov", "50 bodov", "100 bodov"], correct: 0 },
+            { category: "Formula 1", question: "Ktorý okruh je známy pretekaním v uliciach kniežatstva Monako?", options: ["Circuit de Monaco", "Silverstone", "Monza", "Spa-Francorchamps"], correct: 0 },
+            { category: "Formula 1", question: "Čo je to 'Safety Car' (Bezpečnostné vozidlo)?", options: ["Vozidlo, ktoré spomalí pole monopostov pri nebezpečenstve na trati", "Záchranka pre fanúšikov", "Auto riaditeľa pretekov", "Náhradná formula"], correct: 0 },
+            { category: "Formula 1", question: "Kto drží rekord v počte získaných titulov majstra sveta F1 (spolu s Michaelom Schumacherom)?", options: ["Lewis Hamilton", "Max Verstappen", "Ayrton Senna", "Fernando Alonso"], correct: 0 }
+        ];
+
+        let activeQuizQuestions = [];
+        let currentQuestionIdx = 0;
+        let questionStartTime = 0;
+        let quizMode = 'karting';
+
+        function switchAuthMode(mode) {
+            playSound('click');
+            authMode = mode;
+            const loginBtn = document.getElementById('tab-login-btn');
+            const regBtn = document.getElementById('tab-register-btn');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const errorDiv = document.getElementById('auth-error-msg');
+            errorDiv.classList.add('hidden');
+
+            if (mode === 'login') {
+                loginBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
+                regBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
+                submitBtn.textContent = "Prihlásiť sa do Garáže";
+            } else {
+                regBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
+                loginBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
+                submitBtn.textContent = "Zaregistrovať sa";
+            }
+        }
+
+        function setTheme(themeClass) {
+            document.getElementById('app-body').className = `${themeClass} bg-animated text-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden`;
+            userData.theme = themeClass;
+            saveUserData();
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            playSound('click');
+            const usernameInput = document.getElementById('auth-username');
+            const passwordInput = document.getElementById('auth-password');
+            const errorDiv = document.getElementById('auth-error-msg');
+            
+            if (!usernameInput || !passwordInput) return;
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            if (username && password) {
+                const saved = localStorage.getItem('f1_karting_' + username);
+
+                if (authMode === 'register') {
+                    if (saved) {
+                        errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
+                        errorDiv.classList.remove('hidden');
+                        return;
+                    }
+                    currentUser = username;
+                    saveUserData();
+                } else {
+                    if (!saved) {
+                        errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
+                        errorDiv.classList.remove('hidden');
+                        return;
+                    }
+                    currentUser = username;
+                    try {
+                        const parsed = JSON.parse(saved);
+                        userData = { ...userData, ...parsed };
+                    } catch(err) {}
+                }
+
+                errorDiv.classList.add('hidden');
+                if (userData.theme) setTheme(userData.theme);
+
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-menu').classList.remove('hidden');
+                updateProfileUI();
+            }
+        }
+
+        function updateProfileUI() {
+            document.getElementById('user-display-name').textContent = currentUser;
+            document.getElementById('user-coins').textContent = userData.coins;
+            document.getElementById('user-score').textContent = userData.score || 0;
+            document.getElementById('user-title-badge').textContent = userData.title;
+            document.getElementById('user-avatar-icon').textContent = userData.avatar;
+            document.getElementById('user-avatar-box').className = `w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center text-3xl ${userData.frame}`;
+
+            const vipBadge = document.getElementById('user-vip-prefix');
+            if (userData.vipTag) {
+                vipBadge.textContent = userData.vipTag;
+                vipBadge.className = `font-mono text-sm ${userData.vipTagClass || 'text-primary-custom'}`;
+                vipBadge.classList.remove('hidden');
+            } else {
+                vipBadge.classList.add('hidden');
+            }
+
+            const quoteSpan = document.getElementById('user-quote-suffix');
+            if (userData.quote) {
+                quoteSpan.textContent = userData.quote;
+                quoteSpan.classList.remove('hidden');
+            } else {
+                quoteSpan.classList.add('hidden');
+            }
+
+            document.getElementById('shop-user-coins').textContent = userData.coins;
+            document.getElementById('quiz-user-coins').textContent = userData.coins;
+        }
+
+        function saveUserData() {
+            if (currentUser) {
+                localStorage.setItem('f1_karting_' + currentUser, JSON.stringify(userData));
+            }
+        }
+
+        function logout() {
+            playSound('click');
+            currentUser = null;
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('shop-screen').classList.add('hidden');
+            document.getElementById('achievements-screen').classList.add('hidden');
+            document.getElementById('leaderboard-screen').classList.add('hidden');
+        }
+
+        function returnToMenu() {
+            playSound('click');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('shop-screen').classList.add('hidden');
+            document.getElementById('achievements-screen').classList.add('hidden');
+            document.getElementById('leaderboard-screen').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+            updateProfileUI();
+        }
+
+        function startQuiz(mode) {
+            playSound('click');
+            playSound('pass_car');
+            quizMode = mode;
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+
+            let pool = [];
+            if (mode === 'karting') {
+                pool = questionsPool.filter(q => q.category === 'Motokáry');
+                document.getElementById('quiz-mode-label').textContent = "🟢 Motokáry (10 otázok)";
+            } else if (mode === 'f1') {
+                pool = questionsPool.filter(q => q.category === 'Formula 1');
+                document.getElementById('quiz-mode-label').textContent = "🔴 Formula 1 (10 otázok)";
+            } else {
+                pool = [...questionsPool];
+                document.getElementById('quiz-mode-label').textContent = "⚡ Veľká Cena (Zmiešaný)";
+            }
+
+            activeQuizQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 10);
+            currentQuestionIdx = 0;
+            hideQuizMessage();
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            hideQuizMessage();
+            const q = activeQuizQuestions[currentQuestionIdx];
+            document.getElementById('question-category').textContent = q.category.toUpperCase();
+            document.getElementById('current-q-num').textContent = currentQuestionIdx + 1;
+            document.getElementById('question-text').textContent = q.question;
+
+            questionStartTime = Date.now();
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-darkBg hover:bg-slate-800 text-left p-4 rounded-xl border border-borderCol font-semibold transition text-sm flex items-center justify-between";
+                btn.innerHTML = `<span>${opt}</span>`;
+                btn.onclick = () => checkAnswer(idx, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIdx, btnElement) {
+            const q = activeQuizQuestions[currentQuestionIdx];
+            const isCorrect = selectedIdx === q.correct;
+            const responseTime = (Date.now() - questionStartTime) / 1000;
+            const cardBox = document.getElementById('quiz-card-box');
+
+            const allBtns = document.getElementById('options-container').querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                playSound('correct');
+                btnElement.classList.add('bg-emerald-600/30', 'border-emerald-500');
+
+                userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
+
+                // Výraznejšie odstupňovanie odmien podľa rýchlosti
+                let qScore = 60;
+                let qCoins = 8;
+                let speedText = "Štandardné tempo";
+
+                if (responseTime < 5.0) {
+                    qScore = 150;
+                    qCoins = 30;
+                    speedText = "⚡ BLESKOVÁ POLE POSITION!";
+                    userData.stats.lightningAnswers = (userData.stats.lightningAnswers || 0) + 1;
+                } else if (responseTime < 10.0) {
+                    qScore = 100;
+                    qCoins = 18;
+                    speedText = "🔥 Skvelá rýchlosť v zákrute!";
+                }
+
+                userData.coins += qCoins;
+                userData.score = (userData.score || 0) + qScore;
+
+                cardBox.classList.add('anim-glow');
+                setTimeout(() => cardBox.classList.remove('anim-glow'), 300);
+
+                showQuizMessage(`✅ Správne! ${speedText}\n(+${qScore} ⭐, +${qCoins} 🪙)`, true);
+            } else {
+                playSound('wrong');
+                btnElement.classList.add('bg-red-600/30', 'border-red-500');
+                allBtns[q.correct].classList.add('bg-emerald-600/20', 'border-emerald-500');
+
+                showQuizMessage(`❌ Nesprávne!`, false);
+            }
+
+            setTimeout(() => {
+                currentQuestionIdx++;
+                if (currentQuestionIdx < activeQuizQuestions.length) {
+                    renderQuestion();
+                } else {
+                    userData.stats.quizzesCompleted = (userData.stats.quizzesCompleted || 0) + 1;
+                    if (quizMode === 'karting') userData.stats.kartingCompleted = (userData.stats.kartingCompleted || 0) + 1;
+                    if (quizMode === 'f1') userData.stats.f1Completed = (userData.stats.f1Completed || 0) + 1;
+                    if (quizMode === 'mixed') userData.stats.mixedCompleted = (userData.stats.mixedCompleted || 0) + 1;
+                    saveUserData();
+                    playSound('pass_car');
+                    showQuizMessage(`🏁 Kvíz úspešne dokončený!`, true);
+                    setTimeout(() => returnToMenu(), 2500);
+                }
+            }, 1400);
+        }
+
+        function showQuizMessage(msg, isSuccess) {
+            const m = document.getElementById('quiz-message');
+            m.innerText = msg;
+            m.className = `mb-4 p-3.5 rounded-2xl text-center text-sm font-bold whitespace-pre-line ${isSuccess ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-300' : 'bg-red-500/20 border border-red-500 text-red-300'}`;
+            m.classList.remove('hidden');
+        }
+
+        function hideQuizMessage() {
+            document.getElementById('quiz-message').classList.add('hidden');
+        }
+
+        function buyQuizHint() {
+            if (userData.coins < 15) {
+                alert("Nedostatok mincí na nápovedu (stojí 15 🪙)!");
+                return;
+            }
+            userData.coins -= 15;
+            updateProfileUI();
+
+            const q = activeQuizQuestions[currentQuestionIdx];
+            const allBtns = document.getElementById('options-container').querySelectorAll('button');
+            
+            // Nájde jednu nesprávnu možnosť a deaktivuje ju
+            let disabledCount = 0;
+            for (let i = 0; i < allBtns.length; i++) {
+                if (i !== q.correct && !allBtns[i].disabled) {
+                    allBtns[i].style.opacity = '0.3';
+                    allBtns[i].disabled = true;
+                    disabledCount++;
+                    break;
+                }
+            }
+            playSound('buy');
+        }
+
+        function openShop() {
+            playSound('click');
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('shop-screen').classList.remove('hidden');
+            switchShopTab('titles');
+            renderShop();
+        }
+
+        function switchShopTab(tabName) {
+            playSound('click');
+            ['titles', 'avatars', 'frames', 'vips'].forEach(t => {
+                const tabBtn = document.getElementById(`tab-${t}`);
+                const tabContent = document.getElementById(`shop-content-${t}`);
+                if (t === tabName) {
+                    tabBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
+                    tabContent.classList.remove('hidden');
+                } else {
+                    tabBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
+                    tabContent.classList.add('hidden');
+                }
+            });
+        }
+
+        function renderShop() {
+            document.getElementById('shop-user-coins').textContent = userData.coins;
+
+            const titlesContainer = document.getElementById('shop-titles');
+            titlesContainer.innerHTML = '';
+            titlesCatalog.forEach(t => {
+                const owned = userData.inventory.includes(t.id);
+                const active = userData.title === t.id;
+                titlesContainer.innerHTML += `
+                    <div class="bg-darkBg p-3.5 rounded-2xl border border-borderCol flex justify-between items-center">
+                        <span class="font-bold text-white text-sm">${t.id}</span>
+                        ${active ? '<span class="text-xs text-primary-custom font-bold">Aktivované</span>' :
+                          owned ? `<button onclick="equipItem('title', '${t.id}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold">Aktivovať</button>` :
+                          `<button onclick="buyShopItem('title', '${t.id}', ${t.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition">${t.price} 🪙</button>`}
+                    </div>
+                `;
+            });
+
+            const avatarsContainer = document.getElementById('shop-avatars');
+            avatarsContainer.innerHTML = '';
+            avatarsCatalog.forEach(a => {
+                const owned = userData.inventory.includes(a.icon) || a.price === 0;
+                const active = userData.avatar === a.icon;
+                avatarsContainer.innerHTML += `
+                    <button onclick="${owned ? `equipItem('avatar', '${a.icon}')` : `buyShopItem('avatar', '${a.icon}', ${a.price})`}" 
+                            class="p-3 rounded-2xl border text-2xl flex flex-col items-center justify-center gap-1 transition ${active ? 'border-primary-custom bg-primary/20' : 'border-borderCol bg-darkBg hover:bg-slate-800'}">
+                        <span>${a.icon}</span>
+                        ${!owned ? `<span class="text-[10px] text-yellow-400 font-bold">${a.price}🪙</span>` : ''}
+                    </button>
+                `;
+            });
+
+            const framesContainer = document.getElementById('shop-frames');
+            framesContainer.innerHTML = '';
+            framesCatalog.forEach(f => {
+                const owned = userData.inventory.includes(f.class);
+                const active = userData.frame === f.class;
+                framesContainer.innerHTML += `
+                    <div class="bg-darkBg p-3.5 rounded-2xl border border-borderCol flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-lg ${f.class}">
+                                <span>🏎️</span>
+                            </div>
+                            <span class="font-bold text-white text-sm">${f.name}</span>
+                        </div>
+                        ${active ? '<span class="text-xs text-primary-custom font-bold">Aktivovaný</span>' :
+                          owned ? `<button onclick="equipItem('frame', '${f.class}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold">Aktivovať</button>` :
+                          `<button onclick="buyShopItem('frame', '${f.class}', ${f.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition">${f.price} 🪙</button>`}
+                    </div>
+                `;
+            });
+
+            const vipsContainer = document.getElementById('shop-vips');
+            vipsContainer.innerHTML = '';
+            vipCatalog.forEach(v => {
+                const owned = userData.inventory.includes(v.id);
+                const active = userData.vipTag === v.id || userData.quote === v.id;
+                vipsContainer.innerHTML += `
+                    <div class="bg-darkBg p-3.5 rounded-2xl border border-borderCol flex justify-between items-center">
+                        <div>
+                            <div class="font-extrabold text-sm ${v.colorClass || 'text-primary-custom'}">${v.id}</div>
+                            <div class="text-xs text-slate-400 font-semibold">${v.label}</div>
+                        </div>
+                        <div>
+                            ${active ? '<span class="text-xs text-emerald-400 font-bold">Aktivované</span>' :
+                              owned ? `<button onclick="equipVip('${v.type}', '${v.id}', '${v.colorClass || ''}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold">Aktivovať</button>` :
+                              `<button onclick="buyVipItem('${v.type}', '${v.id}', '${v.colorClass || ''}', ${v.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition">${v.price} 🪙</button>`}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function buyShopItem(type, id, price) {
+            if (userData.coins >= price) {
+                playSound('buy');
+                userData.coins -= price;
+                if (!userData.inventory.includes(id)) {
+                    userData.inventory.push(id);
+                    userData.stats.itemsBought = (userData.stats.itemsBought || 0) + 1;
+                }
+                equipItem(type, id);
+                renderShop();
+            } else {
+                playSound('wrong');
+                alert("Nedostatok mincí!");
+            }
+        }
+
+        function buyVipItem(type, id, colorClass, price) {
+            if (userData.coins >= price) {
+                playSound('buy');
+                userData.coins -= price;
+                if (!userData.inventory.includes(id)) {
+                    userData.inventory.push(id);
+                    userData.stats.itemsBought = (userData.stats.itemsBought || 0) + 1;
+                }
+                equipVip(type, id, colorClass);
+                renderShop();
+            } else {
+                playSound('wrong');
+                alert("Nedostatok mincí!");
+            }
+        }
+
+        function equipItem(type, id) {
+            playSound('click');
+            if (type === 'title') userData.title = id;
+            if (type === 'avatar') userData.avatar = id;
+            if (type === 'frame') userData.frame = id;
+            saveUserData();
+            updateProfileUI();
+            renderShop();
+        }
+
+        function equipVip(type, id, colorClass) {
+            playSound('click');
+            if (type === 'tag') {
+                userData.vipTag = (userData.vipTag === id) ? "" : id;
+                userData.vipTagClass = colorClass;
+            } else if (type === 'quote') {
+                userData.quote = (userData.quote === id) ? "" : id;
+            }
+            saveUserData();
+            updateProfileUI();
+            renderShop();
+        }
+
+        function openAchievements() {
+            playSound('click');
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('achievements-screen').classList.remove('hidden');
+            renderAchievements();
+        }
+
+        function renderAchievements() {
+            const list = document.getElementById('achievements-list');
+            list.innerHTML = '';
+
+            achievementsCatalog.forEach((ach) => {
+                const isCompleted = ach.check(userData.stats);
+                const isClaimed = userData.achievements[ach.id];
+
+                let statusHtml = '';
+                if (isClaimed) {
+                    statusHtml = '<span class="text-xs text-slate-500 font-bold">Splnené ✓</span>';
+                } else if (isCompleted) {
+                    statusHtml = `<button onclick="claimAchievement('${ach.id}', ${ach.reward})" class="bg-emerald-500 hover:bg-emerald-600 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition">Vyzdvihnúť (+${ach.reward} 🪙)</button>`;
+                } else {
+                    statusHtml = `<span class="text-xs text-slate-400 font-semibold">Odmena: ${ach.reward} 🪙</span>`;
+                }
+
+                list.innerHTML += `
+                    <div class="bg-darkBg p-3.5 rounded-2xl border border-borderCol flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-white text-sm">${ach.title}</div>
+                            <div class="text-xs text-slate-400">${ach.desc}</div>
+                        </div>
+                        <div>${statusHtml}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function claimAchievement(achId, rewardCoins) {
+            playSound('buy');
+            userData.achievements[achId] = true;
+            userData.coins += rewardCoins;
+            saveUserData();
+            updateProfileUI();
+            renderAchievements();
+        }
+
+        function openLeaderboard() {
+            playSound('click');
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('leaderboard-screen').classList.remove('hidden');
+
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = `
+                <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border border-primary-custom">
+                    <div class="flex items-center gap-3">
+                        <span class="font-extrabold text-sm text-primary-custom">1.</span>
+                        <span class="font-bold text-white text-sm">${currentUser}</span>
+                    </div>
+                    <span class="font-extrabold text-primary-custom text-sm">${userData.score || 0} ⭐</span>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
