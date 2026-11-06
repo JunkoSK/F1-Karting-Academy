@@ -92,7 +92,6 @@
         }
         .anim-glow { animation: pulseGlow 0.3s ease-in-out; }
 
-        /* Šachovnicový efekt pozadia hlavičky */
         .checkered-banner {
             background: repeating-linear-gradient(45deg, #111827, #111827 10px, #1f2937 10px, #1f2937 20px);
             border-bottom: 2px dashed var(--color-primary);
@@ -109,8 +108,8 @@
         </div>
 
         <div class="flex gap-2 mb-6 bg-darkBg p-1.5 rounded-2xl border border-borderCol text-xs font-bold">
-            <button type="button" onclick="switchAuthMode('login')" id="tab-login-btn" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white">Prihlásiť sa</button>
-            <button type="button" onclick="switchAuthMode('register')" id="tab-register-btn" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">Registrovať sa</button>
+            <button type="button" onclick="switchAuthMode('login')" id="tab-login-btn" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer">Prihlásiť sa</button>
+            <button type="button" onclick="switchAuthMode('register')" id="tab-register-btn" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer">Registrovať sa</button>
         </div>
 
         <form id="auth-form" class="space-y-4" onsubmit="handleAuth(event)">
@@ -123,13 +122,12 @@
                 <input type="password" id="auth-password" required class="w-full bg-darkBg border border-borderCol rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 transition text-sm" placeholder="••••••••">
             </div>
             <div id="auth-error-msg" class="text-red-400 text-xs text-center hidden font-bold"></div>
-            <button type="submit" id="auth-submit-btn" class="w-full bg-primary-custom hover:opacity-95 text-white font-extrabold py-3.5 rounded-xl transition shadow-lg mt-2 text-sm">Vstúpiť do Garáže</button>
+            <button type="submit" id="auth-submit-btn" class="w-full bg-primary-custom hover:opacity-95 text-white font-extrabold py-3.5 rounded-xl transition shadow-lg mt-2 text-sm cursor-pointer">Vstúpiť do Garáže</button>
         </form>
     </div>
 
     <!-- Main Game Menu -->
     <div id="main-menu" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10 overflow-hidden">
-        <!-- Šachovnicový efekt v hornej časti menu -->
         <div class="checkered-banner -mx-8 -mt-8 p-3 mb-6 flex justify-between items-center px-6">
             <span class="text-xs font-extrabold tracking-widest text-white uppercase drop-shadow">🏁 F1 & KARTING ACADEMY 🏁</span>
             <span class="text-xs text-yellow-400 font-bold">VIP Garáž</span>
@@ -138,10 +136,10 @@
         <div class="flex justify-between items-center mb-4 bg-darkBg/60 p-3 rounded-2xl border border-borderCol">
             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Farebný štýl garáže:</span>
             <div class="flex gap-2">
-                <button onclick="setTheme('theme-red')" class="w-6 h-6 rounded-full bg-red-500 border-2 border-white hover:scale-110 transition" title="Červená"></button>
-                <button onclick="setTheme('theme-blue')" class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white hover:scale-110 transition" title="Modrá"></button>
-                <button onclick="setTheme('theme-yellow')" class="w-6 h-6 rounded-full bg-yellow-400 border-2 border-white hover:scale-110 transition" title="Žltá"></button>
-                <button onclick="setTheme('theme-green')" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white hover:scale-110 transition" title="Zelená"></button>
+                <button onclick="setTheme('theme-red')" class="w-6 h-6 rounded-full bg-red-500 border-2 border-white hover:scale-110 transition cursor-pointer" title="Červená"></button>
+                <button onclick="setTheme('theme-blue')" class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white hover:scale-110 transition cursor-pointer" title="Modrá"></button>
+                <button onclick="setTheme('theme-yellow')" class="w-6 h-6 rounded-full bg-yellow-400 border-2 border-white hover:scale-110 transition cursor-pointer" title="Žltá"></button>
+                <button onclick="setTheme('theme-green')" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white hover:scale-110 transition cursor-pointer" title="Zelená"></button>
             </div>
         </div>
 
@@ -163,12 +161,12 @@
                     </div>
                 </div>
             </div>
-            <button onclick="logout()" class="text-slate-400 hover:text-red-400 text-sm font-semibold transition bg-slate-800/50 px-3 py-1.5 rounded-xl border border-borderCol">Odhlásiť</button>
+            <button onclick="logout()" class="text-slate-400 hover:text-red-400 text-sm font-semibold transition bg-slate-800/50 px-3 py-1.5 rounded-xl border border-borderCol cursor-pointer">Odhlásiť</button>
         </div>
 
         <div class="space-y-3 mb-6">
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Vyber si kategóriu / mód (10 otázok)</h3>
-            <button onclick="startQuiz('karting')" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold py-3.5 px-5 rounded-2xl transition border border-borderCol flex justify-between items-center text-left group">
+            <button onclick="startQuiz('karting')" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold py-3.5 px-5 rounded-2xl transition border border-borderCol flex justify-between items-center text-left group cursor-pointer">
                 <div>
                     <div class="text-base group-hover:text-emerald-400 transition-colors">🟢 Motokárová Škola</div>
                     <div class="text-xs text-slate-400">Pravidlá na trati, vlajky, stopa a základy predbiehania</div>
@@ -176,7 +174,7 @@
                 <span class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-lg border border-emerald-500/30">10 Otázok</span>
             </button>
             
-            <button onclick="startQuiz('f1')" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold py-3.5 px-5 rounded-2xl transition border border-borderCol flex justify-between items-center text-left group">
+            <button onclick="startQuiz('f1')" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold py-3.5 px-5 rounded-2xl transition border border-borderCol flex justify-between items-center text-left group cursor-pointer">
                 <div>
                     <div class="text-base group-hover:text-primary-custom transition-colors">🔴 Formula 1 Expert</div>
                     <div class="text-xs text-slate-400">Pravidlá DRS, stratégie pneumatík a história</div>
@@ -184,7 +182,7 @@
                 <span class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-lg border border-borderCol">10 Otázok</span>
             </button>
 
-            <button onclick="startQuiz('mixed')" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold py-3.5 px-5 rounded-2xl transition border border-borderCol flex justify-between items-center text-left group">
+            <button onclick="startQuiz('mixed')" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-white font-bold py-3.5 px-5 rounded-2xl transition border border-borderCol flex justify-between items-center text-left group cursor-pointer">
                 <div>
                     <div class="text-base group-hover:text-amber-400 transition-colors">⚡ Veľká Cena (Zmiešaný špeciál)</div>
                     <div class="text-xs text-slate-400">10 náročných otázok z celého motorsportu</div>
@@ -194,16 +192,16 @@
         </div>
 
         <div class="grid grid-cols-3 gap-3">
-            <button onclick="openShop()" class="bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 font-bold py-3 px-2 rounded-2xl transition border border-borderCol text-center text-xs">🛒 Obchod</button>
-            <button onclick="openAchievements()" class="bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 font-bold py-3 px-2 rounded-2xl transition border border-borderCol text-center text-xs flex items-center justify-center gap-1">🏅 Úspechy</button>
-            <button onclick="openLeaderboard()" class="bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 font-bold py-3 px-2 rounded-2xl transition border border-borderCol text-center text-xs">🏆 Rebríček</button>
+            <button onclick="openShop()" class="bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 font-bold py-3 px-2 rounded-2xl transition border border-borderCol text-center text-xs cursor-pointer">🛒 Obchod</button>
+            <button onclick="openAchievements()" class="bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 font-bold py-3 px-2 rounded-2xl transition border border-borderCol text-center text-xs flex items-center justify-center gap-1 cursor-pointer">🏅 Úspechy</button>
+            <button onclick="openLeaderboard()" class="bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 font-bold py-3 px-2 rounded-2xl transition border border-borderCol text-center text-xs cursor-pointer">🏆 Rebríček</button>
         </div>
     </div>
 
     <!-- Quiz Screen -->
     <div id="quiz-screen" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10">
         <div class="flex justify-between items-center mb-6">
-            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm">← Späť do garáže</button>
+            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm cursor-pointer">← Späť do garáže</button>
             <div class="text-sm font-bold text-primary-custom flex items-center gap-2">
                 <span id="quiz-mode-label">Motokáry</span>
             </div>
@@ -223,7 +221,7 @@
 
         <div class="flex justify-between items-center text-xs text-slate-400 border-t border-borderCol pt-4">
             <span class="text-yellow-400 font-bold">Mince: 🪙 <span id="quiz-user-coins">50</span></span>
-            <button onclick="buyQuizHint()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-borderCol px-3 py-1.5 rounded-xl font-semibold transition">💡 Nápoveda (-15 🪙)</button>
+            <button onclick="buyQuizHint()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-borderCol px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer">💡 Nápoveda (-15 🪙)</button>
         </div>
     </div>
 
@@ -232,14 +230,14 @@
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold text-white">Pit-Stop Obchod</h2>
             <div class="text-yellow-400 text-sm font-bold bg-darkBg px-3 py-1 rounded-xl border border-borderCol">🪙 <span id="shop-user-coins">50</span></div>
-            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm">Zavrieť</button>
+            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm cursor-pointer">Zavrieť</button>
         </div>
 
         <div class="flex gap-2 mb-6 bg-darkBg p-1.5 rounded-2xl border border-borderCol text-xs font-bold">
-            <button onclick="switchShopTab('titles')" id="tab-titles" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white">🏷️ Tituly</button>
-            <button onclick="switchShopTab('avatars')" id="tab-avatars" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">🪖 Helmy</button>
-            <button onclick="switchShopTab('frames')" id="tab-frames" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">🖼️ Rámčeky</button>
-            <button onclick="switchShopTab('vips')" id="tab-vips" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">⭐ VIP</button>
+            <button onclick="switchShopTab('titles')" id="tab-titles" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer">🏷️ Tituly</button>
+            <button onclick="switchShopTab('avatars')" id="tab-avatars" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer">🪖 Helmy</button>
+            <button onclick="switchShopTab('frames')" id="tab-frames" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer">🖼️ Rámčeky</button>
+            <button onclick="switchShopTab('vips')" id="tab-vips" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer">⭐ VIP</button>
         </div>
 
         <div class="max-h-[380px] overflow-y-auto pr-1">
@@ -257,7 +255,7 @@
                 <h2 class="text-xl font-bold text-white">🏅 Úspechy</h2>
                 <p class="text-xs text-slate-400">Splň výzvy a získaj odmeny</p>
             </div>
-            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm">Zavrieť</button>
+            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm cursor-pointer">Zavrieť</button>
         </div>
         <div id="achievements-list" class="space-y-3 max-h-[440px] overflow-y-auto pr-1"></div>
     </div>
@@ -266,7 +264,7 @@
     <div id="leaderboard-screen" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold text-white">🏆 Rebríček</h2>
-            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm">Zavrieť</button>
+            <button onclick="returnToMenu()" class="text-slate-400 hover:text-white text-sm cursor-pointer">Zavrieť</button>
         </div>
         <div id="leaderboard-list" class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1"></div>
     </div>
@@ -526,12 +524,12 @@
             errorDiv.classList.add('hidden');
 
             if (mode === 'login') {
-                loginBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
-                regBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
+                loginBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer";
+                regBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer";
                 submitBtn.textContent = "Prihlásiť sa do Garáže";
             } else {
-                regBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
-                loginBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
+                regBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer";
+                loginBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer";
                 submitBtn.textContent = "Zaregistrovať sa";
             }
         }
@@ -543,48 +541,59 @@
         }
 
         function handleAuth(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
             playSound('click');
             const usernameInput = document.getElementById('auth-username');
             const passwordInput = document.getElementById('auth-password');
             const errorDiv = document.getElementById('auth-error-msg');
             
-            if (!usernameInput || !passwordInput) return;
+            if (!usernameInput || !passwordInput) return false;
             
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
 
-            if (username && password) {
-                const saved = localStorage.getItem('f1_karting_' + username);
-
-                if (authMode === 'register') {
-                    if (saved) {
-                        errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
-                        errorDiv.classList.remove('hidden');
-                        return;
-                    }
-                    currentUser = username;
-                    saveUserData();
-                } else {
-                    if (!saved) {
-                        errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
-                        errorDiv.classList.remove('hidden');
-                        return;
-                    }
-                    currentUser = username;
-                    try {
-                        const parsed = JSON.parse(saved);
-                        userData = { ...userData, ...parsed };
-                    } catch(err) {}
-                }
-
-                errorDiv.classList.add('hidden');
-                if (userData.theme) setTheme(userData.theme);
-
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-menu').classList.remove('hidden');
-                updateProfileUI();
+            if (!username || !password) {
+                errorDiv.textContent = "Zadajte meno aj heslo!";
+                errorDiv.classList.remove('hidden');
+                return false;
             }
+
+            const saved = localStorage.getItem('f1_karting_' + username);
+
+            if (authMode === 'register') {
+                if (saved) {
+                    errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
+                    errorDiv.classList.remove('hidden');
+                    return false;
+                }
+                currentUser = username;
+                userData.password = password;
+                saveUserData();
+            } else {
+                if (!saved) {
+                    errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
+                    errorDiv.classList.remove('hidden');
+                    return false;
+                }
+                currentUser = username;
+                try {
+                    const parsed = JSON.parse(saved);
+                    userData = { ...userData, ...parsed };
+                    if (password !== userData.password && userData.password) {
+                        errorDiv.textContent = "Nesprávne heslo!";
+                        errorDiv.classList.remove('hidden');
+                        return false;
+                    }
+                } catch(err) {}
+            }
+
+            errorDiv.classList.add('hidden');
+            if (userData.theme) setTheme(userData.theme);
+
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+            updateProfileUI();
+            return false;
         }
 
         function updateProfileUI() {
@@ -682,7 +691,7 @@
 
             q.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = "w-full bg-darkBg hover:bg-slate-800 text-left p-4 rounded-xl border border-borderCol font-semibold transition text-sm flex items-center justify-between";
+                btn.className = "w-full bg-darkBg hover:bg-slate-800 text-left p-4 rounded-xl border border-borderCol font-semibold transition text-sm flex items-center justify-between cursor-pointer";
                 btn.innerHTML = `<span>${opt}</span>`;
                 btn.onclick = () => checkAnswer(idx, btn);
                 container.appendChild(btn);
@@ -704,7 +713,6 @@
 
                 userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
 
-                // Výraznejšie odstupňovanie odmien podľa rýchlosti
                 let qScore = 60;
                 let qCoins = 8;
                 let speedText = "Štandardné tempo";
@@ -774,13 +782,10 @@
             const q = activeQuizQuestions[currentQuestionIdx];
             const allBtns = document.getElementById('options-container').querySelectorAll('button');
             
-            // Nájde jednu nesprávnu možnosť a deaktivuje ju
-            let disabledCount = 0;
             for (let i = 0; i < allBtns.length; i++) {
                 if (i !== q.correct && !allBtns[i].disabled) {
                     allBtns[i].style.opacity = '0.3';
                     allBtns[i].disabled = true;
-                    disabledCount++;
                     break;
                 }
             }
@@ -801,10 +806,10 @@
                 const tabBtn = document.getElementById(`tab-${t}`);
                 const tabContent = document.getElementById(`shop-content-${t}`);
                 if (t === tabName) {
-                    tabBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
+                    tabBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer";
                     tabContent.classList.remove('hidden');
                 } else {
-                    tabBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
+                    tabBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer";
                     tabContent.classList.add('hidden');
                 }
             });
@@ -822,8 +827,8 @@
                     <div class="bg-darkBg p-3.5 rounded-2xl border border-borderCol flex justify-between items-center">
                         <span class="font-bold text-white text-sm">${t.id}</span>
                         ${active ? '<span class="text-xs text-primary-custom font-bold">Aktivované</span>' :
-                          owned ? `<button onclick="equipItem('title', '${t.id}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold">Aktivovať</button>` :
-                          `<button onclick="buyShopItem('title', '${t.id}', ${t.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition">${t.price} 🪙</button>`}
+                          owned ? `<button onclick="equipItem('title', '${t.id}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
+                          `<button onclick="buyShopItem('title', '${t.id}', ${t.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${t.price} 🪙</button>`}
                     </div>
                 `;
             });
@@ -835,7 +840,7 @@
                 const active = userData.avatar === a.icon;
                 avatarsContainer.innerHTML += `
                     <button onclick="${owned ? `equipItem('avatar', '${a.icon}')` : `buyShopItem('avatar', '${a.icon}', ${a.price})`}" 
-                            class="p-3 rounded-2xl border text-2xl flex flex-col items-center justify-center gap-1 transition ${active ? 'border-primary-custom bg-primary/20' : 'border-borderCol bg-darkBg hover:bg-slate-800'}">
+                            class="p-3 rounded-2xl border text-2xl flex flex-col items-center justify-center gap-1 transition cursor-pointer ${active ? 'border-primary-custom bg-primary/20' : 'border-borderCol bg-darkBg hover:bg-slate-800'}">
                         <span>${a.icon}</span>
                         ${!owned ? `<span class="text-[10px] text-yellow-400 font-bold">${a.price}🪙</span>` : ''}
                     </button>
@@ -856,8 +861,8 @@
                             <span class="font-bold text-white text-sm">${f.name}</span>
                         </div>
                         ${active ? '<span class="text-xs text-primary-custom font-bold">Aktivovaný</span>' :
-                          owned ? `<button onclick="equipItem('frame', '${f.class}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold">Aktivovať</button>` :
-                          `<button onclick="buyShopItem('frame', '${f.class}', ${f.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition">${f.price} 🪙</button>`}
+                          owned ? `<button onclick="equipItem('frame', '${f.class}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
+                          `<button onclick="buyShopItem('frame', '${f.class}', ${f.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${f.price} 🪙</button>`}
                     </div>
                 `;
             });
@@ -875,8 +880,8 @@
                         </div>
                         <div>
                             ${active ? '<span class="text-xs text-emerald-400 font-bold">Aktivované</span>' :
-                              owned ? `<button onclick="equipVip('${v.type}', '${v.id}', '${v.colorClass || ''}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold">Aktivovať</button>` :
-                              `<button onclick="buyVipItem('${v.type}', '${v.id}', '${v.colorClass || ''}', ${v.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition">${v.price} 🪙</button>`}
+                              owned ? `<button onclick="equipVip('${v.type}', '${v.id}', '${v.colorClass || ''}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
+                              `<button onclick="buyVipItem('${v.type}', '${v.id}', '${v.colorClass || ''}', ${v.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${v.price} 🪙</button>`}
                         </div>
                     </div>
                 `;
@@ -957,7 +962,7 @@
                 if (isClaimed) {
                     statusHtml = '<span class="text-xs text-slate-500 font-bold">Splnené ✓</span>';
                 } else if (isCompleted) {
-                    statusHtml = `<button onclick="claimAchievement('${ach.id}', ${ach.reward})" class="bg-emerald-500 hover:bg-emerald-600 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition">Vyzdvihnúť (+${ach.reward} 🪙)</button>`;
+                    statusHtml = `<button onclick="claimAchievement('${ach.id}', ${ach.reward})" class="bg-emerald-500 hover:bg-emerald-600 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">Vyzdvihnúť (+${ach.reward} 🪙)</button>`;
                 } else {
                     statusHtml = `<span class="text-xs text-slate-400 font-semibold">Odmena: ${ach.reward} 🪙</span>`;
                 }
