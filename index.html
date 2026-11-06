@@ -475,6 +475,7 @@
             { name: "Dúhový Šampión", class: "frame-champion-rainbow", price: 1050 }
         ];
 
+        // Pôvodný VIP katalóg (nechaj tu len skratky pretekárov)
         const vipCatalog = [
             { id: "[NOR]", type: "tag", label: "Lando Norris (McLaren)", price: 400, colorClass: "color-mclaren" },
             { id: "[PIA]", type: "tag", label: "Oscar Piastri (McLaren)", price: 450, colorClass: "color-mclaren" },
@@ -497,16 +498,20 @@
             { id: "[GAS]", type: "tag", label: "Pierre Gasly (Alpine)", price: 380, colorClass: "color-alpine" },
             { id: "[COL]", type: "tag", label: "Franco Colapinto (Alpine)", price: 400, colorClass: "color-alpine" },
             { id: "[BOT]", type: "tag", label: "Valtteri Bottas (Cadillac)", price: 380, colorClass: "color-cadillac" },
-            { id: "[PER]", type: "tag", label: "Sergio Pérez (Cadillac)", price: 400, colorClass: "color-cadillac" },
-            { index: 1, id: "Červené svetlá zhasli a máme odštartované!", type: "quote", label: "🎙️ EisKing", price: 600 },
-            { index: 2, id: "Leave me alone, I know what I'm doing", type: "quote", label: "💬 Kimi Räikkönen", price: 650 },
-            { index: 3, id: "Simply lovely!", type: "quote", label: "💬 Max Verstappen", price: 600 },
-            { index: 4, id: "Hammer time!", type: "quote", label: "💬 Bono / Hamilton", price: 600 },
-            { index: 5, id: "All the time you have to leave a space!", type: "quote", label: "💬 Fernando Alonso", price: 700 },
-            { index: 6, id: "Box, box! Stay out, stay out!", type: "quote", label: "💬 Ferrari Pit Wall", price: 750 },
-            { index: 7, id: "No Michael no, that is so not right!", type: "quote", label: "💬 Toto Wolff", price: 800 },
-            { index: 8, id: "We look like a bunch of wankers", type: "quote", label: "💬 Guenther Steiner", price: 850 },
-            { index: 9, id: "GP2 Engine... GP2 Engine!", type: "quote", label: "💬 Fernando Alonso", price: 950 }
+            { id: "[PER]", type: "tag", label: "Sergio Pérez (Cadillac)", price: 400, colorClass: "color-cadillac" }
+        ];
+
+        // Nový samostatný katalóg len pre hlášky
+        const quotesCatalog = [
+            { id: "Červené svetlá zhasli a máme odštartované!", type: "quote", label: "🎙️ EisKing", price: 600 },
+            { id: "Leave me alone, I know what I'm doing", type: "quote", label: "💬 Kimi Räikkönen", price: 650 },
+            { id: "Simply lovely!", type: "quote", label: "💬 Max Verstappen", price: 600 },
+            { id: "Hammer time!", type: "quote", label: "💬 Bono / Hamilton", price: 600 },
+            { id: "All the time you have to leave a space!", type: "quote", label: "💬 Fernando Alonso", price: 700 },
+            { id: "Box, box! Stay out, stay out!", type: "quote", label: "💬 Ferrari Pit Wall", price: 750 },
+            { id: "No Michael no, that is so not right!", type: "quote", label: "💬 Toto Wolff", price: 800 },
+            { id: "We look like a bunch of wankers", type: "quote", label: "💬 Guenther Steiner", price: 850 },
+            { id: "GP2 Engine... GP2 Engine!", type: "quote", label: "💬 Fernando Alonso", price: 950 }
         ];
 
         const questionsPool = [
@@ -1413,21 +1418,42 @@
 
 const vipsContainer = document.getElementById('shop-vips');
             vipsContainer.innerHTML = '';
+            
+            // Najskôr vykreslíme skratky pretekárov z vipCatalog
             vipCatalog.forEach((v, idx) => {
-                const itemIndex = v.index !== undefined ? v.index : idx;
                 const owned = userData.inventory.includes(v.id);
-                const active = userData.vipTag === v.id || userData.quote === v.id;
+                const active = userData.vipTag === v.id;
 
                 vipsContainer.innerHTML += `
-                    <div class="bg-darkBg p-3.5 rounded-2xl border border-borderCol flex justify-between items-center">
+                    <div class="bg-darkBg p-3.5 rounded-2xl border border-borderCol flex justify-between items-center mb-2">
                         <div>
                             <div class="font-extrabold text-sm ${v.colorClass || 'text-primary-custom'}">${v.id}</div>
                             <div class="text-xs text-slate-400 font-semibold">${v.label}</div>
                         </div>
                         <div>
                             ${active ? '<span class="text-xs text-emerald-400 font-bold">Aktivované</span>' :
-                              owned ? `<button onclick="equipVipByIndex(${itemIndex})" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
-                              `<button onclick="buyVipByIndex(${itemIndex})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${v.price} 🪙</button>`}
+                              owned ? `<button onclick="equipVip('${v.type}', ${JSON.stringify(v.id)}, '${v.colorClass || ''}')" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
+                              `<button onclick="buyVipItem('${v.type}', ${JSON.stringify(v.id)}, '${v.colorClass || ''}', ${v.price})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${v.price} 🪙</button>`}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Potom pod nich vykreslíme hlášky z quotesCatalog
+            quotesCatalog.forEach((q, idx) => {
+                const owned = userData.inventory.includes(q.id);
+                const active = userData.quote === q.id;
+
+                vipsContainer.innerHTML += `
+                    <div class="bg-darkBg p-3.5 rounded-2xl border border-borderCol flex justify-between items-center mb-2">
+                        <div>
+                            <div class="font-extrabold text-sm text-amber-400">${q.id}</div>
+                            <div class="text-xs text-slate-400 font-semibold">${q.label}</div>
+                        </div>
+                        <div>
+                            ${active ? '<span class="text-xs text-emerald-400 font-bold">Aktivované</span>' :
+                              owned ? `<button onclick="equipQuoteByIndex(${idx})" class="bg-slate-700 hover:bg-slate-600 text-xs text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Aktivovať</button>` :
+                              `<button onclick="buyQuoteByIndex(${idx})" class="bg-primary-custom hover:opacity-90 text-xs text-white font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">${q.price} 🪙</button>`}
                         </div>
                     </div>
                 `;
