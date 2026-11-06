@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 & Karting Academy</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏎️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
@@ -1173,29 +1174,32 @@
         }
 
         function startQuiz(mode) {
-            playSound('click');
-            playSound('pass_car');
-            quizMode = mode;
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
+    quizMode = mode;
+    currentQuestionIdx = 0;
+    
+    // 1. Filtrujeme otázky podľa zvolenej kategórie
+    let filteredQuestions = [];
+    if (mode === 'karting') {
+        filteredQuestions = questionsPool.filter(q => q.category === 'Motokáry');
+    } else if (mode === 'f1') {
+        filteredQuestions = questionsPool.filter(q => q.category === 'Formula 1');
+    } else { // mixed
+        filteredQuestions = [...questionsPool];
+    }
 
-            let pool = [];
-            if (mode === 'karting') {
-                pool = questionsPool.filter(q => q.category === 'Motokáry');
-                document.getElementById('quiz-mode-label').textContent = "🟢 Motokáry (10 otázok)";
-            } else if (mode === 'f1') {
-                pool = questionsPool.filter(q => q.category === 'Formula 1');
-                document.getElementById('quiz-mode-label').textContent = "🔴 Formula 1 (10 otázok)";
-            } else {
-                pool = [...questionsPool];
-                document.getElementById('quiz-mode-label').textContent = "⚡ Veľká Cena (Zmiešaný)";
-            }
+    // 2. Zamiešame VŠETKY dostupné otázky v danej kategórii (Fisher-Yates shuffle)
+    for (let i = filteredQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredQuestions[i], filteredQuestions[j]] = [filteredQuestions[j], filteredQuestions[i]];
+    }
 
-            activeQuizQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 10);
-            currentQuestionIdx = 0;
-            hideQuizMessage();
-            renderQuestion();
-        }
+    // 3. Vyberieme prvých 10 (alebo požadovaný počet) z náhodne premiešaného balíka
+    activeQuizQuestions = filteredQuestions.slice(0, 10);
+
+    // 4. Prepnutie obrazovky a spustenie
+    showScreen('quiz-screen');
+    renderQuestion();
+}
 
         function renderQuestion() {
     hideQuizMessage();
@@ -1243,18 +1247,18 @@ function checkAnswerMixed(isCorrect, btnElement, optionsWithMeta) {
 
         userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
 
-        let qScore = 60;
-        let qCoins = 8;
+        let qScore = 30;
+        let qCoins = 4;
         let speedText = "Štandardné tempo";
 
         if (responseTime < 5.0) {
-            qScore = 150;
-            qCoins = 30;
+            qScore = 75;
+            qCoins = 15;
             speedText = "⚡ BLESKOVÁ POLE POSITION!";
             userData.stats.lightningAnswers = (userData.stats.lightningAnswers || 0) + 1;
         } else if (responseTime < 10.0) {
-            qScore = 100;
-            qCoins = 18;
+            qScore = 50;
+            qCoins = 9;
             speedText = "🔥 Skvelá rýchlosť v zákrute!";
         }
 
