@@ -1243,18 +1243,18 @@ function checkAnswerMixed(isCorrect, btnElement, optionsWithMeta) {
 
         userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
 
-        let qScore = 60;
-        let qCoins = 8;
+        let qScore = 30;
+        let qCoins = 4;
         let speedText = "Štandardné tempo";
 
         if (responseTime < 5.0) {
-            qScore = 150;
-            qCoins = 30;
+            qScore = 70;
+            qCoins = 15;
             speedText = "⚡ BLESKOVÁ POLE POSITION!";
             userData.stats.lightningAnswers = (userData.stats.lightningAnswers || 0) + 1;
         } else if (responseTime < 10.0) {
-            qScore = 100;
-            qCoins = 18;
+            qScore = 50;
+            qCoins = 9;
             speedText = "🔥 Skvelá rýchlosť v zákrute!";
         }
 
