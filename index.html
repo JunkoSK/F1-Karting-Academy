@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 & Karting Academy</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase kompatibilné skripty pre priame vloženie do HTML -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -95,6 +92,7 @@
         }
         .anim-glow { animation: pulseGlow 0.3s ease-in-out; }
 
+        /* Šachovnicový efekt pozadia hlavičky */
         .checkered-banner {
             background: repeating-linear-gradient(45deg, #111827, #111827 10px, #1f2937 10px, #1f2937 20px);
             border-bottom: 2px dashed var(--color-primary);
@@ -111,11 +109,11 @@
         </div>
 
         <div class="flex gap-2 mb-6 bg-darkBg p-1.5 rounded-2xl border border-borderCol text-xs font-bold">
-            <button type="button" onclick="switchAuthMode('login')" id="tab-login-btn" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer">Prihlásiť sa</button>
-            <button type="button" onclick="switchAuthMode('register')" id="tab-register-btn" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer">Registrovať sa</button>
+            <button type="button" onclick="switchAuthMode('login')" id="tab-login-btn" class="flex-1 py-2 rounded-xl transition bg-primary-custom text-white">Prihlásiť sa</button>
+            <button type="button" onclick="switchAuthMode('register')" id="tab-register-btn" class="flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white">Registrovať sa</button>
         </div>
 
-        <form id="auth-form" class="space-y-4" onsubmit="handleAuth(event); return false;">
+        <form id="auth-form" class="space-y-4" onsubmit="handleAuth(event)">
             <div>
                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Herné meno</label>
                 <input type="text" id="auth-username" required class="w-full bg-darkBg border border-borderCol rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 transition text-sm" placeholder="napr. RacerSk">
@@ -131,6 +129,7 @@
 
     <!-- Main Game Menu -->
     <div id="main-menu" class="hidden w-full max-w-xl bg-cardBg/90 backdrop-blur-md border border-borderCol p-8 rounded-3xl shadow-2xl relative z-10 overflow-hidden">
+        <!-- Šachovnicový efekt v hornej časti menu -->
         <div class="checkered-banner -mx-8 -mt-8 p-3 mb-6 flex justify-between items-center px-6">
             <span class="text-xs font-extrabold tracking-widest text-white uppercase drop-shadow">🏁 F1 & KARTING ACADEMY 🏁</span>
             <span class="text-xs text-yellow-400 font-bold">VIP Garáž</span>
@@ -273,21 +272,6 @@
     </div>
 
     <script>
-        // ==================== FIREBASE CONFIG ====================
-        const firebaseConfig = {
-            apiKey: "AIzaSyCNHKoHO426UEm-xW3F02z_s44dFMtH_n0",
-            authDomain: "f1-and-karting-academy.firebaseapp.com",
-            databaseURL: "https://f1-and-karting-academy-default-rtdb.firebaseio.com",
-            projectId: "f1-and-karting-academy",
-            storageBucket: "f1-and-karting-academy.firebasestorage.app",
-            messagingSenderId: "531787077252",
-            appId: "1:531787077252:web:9cc1446a52f28ba3f814d1"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        // =========================================================
-
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
@@ -542,12 +526,12 @@
             errorDiv.classList.add('hidden');
 
             if (mode === 'login') {
-                loginBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer";
-                regBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer";
-                submitBtn.textContent = "Vstúpiť do Garáže";
+                loginBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
+                regBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
+                submitBtn.textContent = "Prihlásiť sa do Garáže";
             } else {
-                regBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white cursor-pointer";
-                loginBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white cursor-pointer";
+                regBtn.className = "flex-1 py-2 rounded-xl transition bg-primary-custom text-white";
+                loginBtn.className = "flex-1 py-2 rounded-xl transition text-slate-400 hover:text-white";
                 submitBtn.textContent = "Zaregistrovať sa";
             }
         }
@@ -559,48 +543,39 @@
         }
 
         function handleAuth(e) {
-            if (e) e.preventDefault();
+            e.preventDefault();
             playSound('click');
             const usernameInput = document.getElementById('auth-username');
             const passwordInput = document.getElementById('auth-password');
             const errorDiv = document.getElementById('auth-error-msg');
             
-            if (!usernameInput || !passwordInput) return false;
+            if (!usernameInput || !passwordInput) return;
             
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
 
-            if (!username || !password) {
-                errorDiv.textContent = "Zadajte meno aj heslo!";
-                errorDiv.classList.remove('hidden');
-                return false;
-            }
-
-            db.ref('users/' + username).once('value', (snapshot) => {
-                const existingUser = snapshot.val();
+            if (username && password) {
+                const saved = localStorage.getItem('f1_karting_' + username);
 
                 if (authMode === 'register') {
-                    if (existingUser) {
+                    if (saved) {
                         errorDiv.textContent = "Tohoto jazdca už máme! Prepnite sa na Prihlásiť sa.";
                         errorDiv.classList.remove('hidden');
                         return;
                     }
                     currentUser = username;
-                    userData.password = password;
                     saveUserData();
                 } else {
-                    if (!existingUser) {
+                    if (!saved) {
                         errorDiv.textContent = "Účet neexistuje. Zaregistrujte sa!";
                         errorDiv.classList.remove('hidden');
                         return;
                     }
-                    if (existingUser.password && existingUser.password !== password) {
-                        errorDiv.textContent = "Nesprávne heslo!";
-                        errorDiv.classList.remove('hidden');
-                        return;
-                    }
                     currentUser = username;
-                    userData = { ...userData, ...existingUser };
+                    try {
+                        const parsed = JSON.parse(saved);
+                        userData = { ...userData, ...parsed };
+                    } catch(err) {}
                 }
 
                 errorDiv.classList.add('hidden');
@@ -609,9 +584,7 @@
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('main-menu').classList.remove('hidden');
                 updateProfileUI();
-            });
-
-            return false;
+            }
         }
 
         function updateProfileUI() {
@@ -645,12 +618,7 @@
 
         function saveUserData() {
             if (currentUser) {
-                db.ref('users/' + currentUser).set(userData);
-                db.ref('leaderboard/' + currentUser).set({
-                    username: currentUser,
-                    score: userData.score || 0,
-                    title: userData.title
-                });
+                localStorage.setItem('f1_karting_' + currentUser, JSON.stringify(userData));
             }
         }
 
@@ -736,6 +704,7 @@
 
                 userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
 
+                // Výraznejšie odstupňovanie odmien podľa rýchlosti
                 let qScore = 60;
                 let qCoins = 8;
                 let speedText = "Štandardné tempo";
@@ -805,10 +774,13 @@
             const q = activeQuizQuestions[currentQuestionIdx];
             const allBtns = document.getElementById('options-container').querySelectorAll('button');
             
+            // Nájde jednu nesprávnu možnosť a deaktivuje ju
+            let disabledCount = 0;
             for (let i = 0; i < allBtns.length; i++) {
                 if (i !== q.correct && !allBtns[i].disabled) {
                     allBtns[i].style.opacity = '0.3';
                     allBtns[i].disabled = true;
+                    disabledCount++;
                     break;
                 }
             }
@@ -1017,38 +989,15 @@
             document.getElementById('leaderboard-screen').classList.remove('hidden');
 
             const list = document.getElementById('leaderboard-list');
-            list.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Načítavam rebríček...</div>';
-
-            db.ref('leaderboard').once('value', (snapshot) => {
-                list.innerHTML = '';
-                let players = [];
-                snapshot.forEach((child) => {
-                    players.push(child.val());
-                });
-
-                players.sort((a, b) => b.score - a.score);
-
-                if (players.length === 0) {
-                    list.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Zatiaľ žiadni hráči v rebríčku.</div>';
-                    return;
-                }
-
-                players.slice(0, 10).forEach((player, index) => {
-                    const isCurrent = player.username === currentUser;
-                    list.innerHTML += `
-                        <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border ${isCurrent ? 'border-primary-custom' : 'border-borderCol'}">
-                            <div class="flex items-center gap-3">
-                                <span class="font-extrabold text-sm text-primary-custom">${index + 1}.</span>
-                                <div>
-                                    <span class="font-bold text-white text-sm">${player.username}</span>
-                                    <span class="block text-[10px] text-slate-400">${player.title || 'Jazdec'}</span>
-                                </div>
-                            </div>
-                            <span class="font-extrabold text-primary-custom text-sm">${player.score || 0} ⭐</span>
-                        </div>
-                    `;
-                });
-            });
+            list.innerHTML = `
+                <div class="flex justify-between items-center p-3.5 bg-darkBg rounded-2xl border border-primary-custom">
+                    <div class="flex items-center gap-3">
+                        <span class="font-extrabold text-sm text-primary-custom">1.</span>
+                        <span class="font-bold text-white text-sm">${currentUser}</span>
+                    </div>
+                    <span class="font-extrabold text-primary-custom text-sm">${userData.score || 0} ⭐</span>
+                </div>
+            `;
         }
     </script>
 </body>
