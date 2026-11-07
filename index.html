@@ -1615,6 +1615,25 @@ const vipsContainer = document.getElementById('shop-vips');
                 list.innerHTML = '<div class="text-center text-red-400 text-sm py-4">Chyba pri načítavaní rebríčka.</div>';
             }
         }
+        function buyTagByIndex(index) {
+            const v = vipCatalog[index];
+            if (!v) return;
+
+            if (userData.coins >= v.price) {
+                playSound('buy');
+                userData.coins -= v.price;
+                if (!userData.inventory.includes(v.id)) {
+                    userData.inventory.push(v.id);
+                    userData.stats.itemsBought = (userData.stats.itemsBought || 0) + 1;
+                }
+                equipTagByIndex(index);
+                renderShop();
+            } else {
+                playSound('wrong');
+                alert("Nedostatok mincí!");
+            }
+        }
+
         function equipTagByIndex(index) {
             const v = vipCatalog[index];
             if (!v) return;
