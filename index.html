@@ -33,10 +33,10 @@
             --theme-glow: rgba(239, 68, 68, 0.1);
         }
 
-        .theme-red { --color-primary: #ef4444; --color-primary-dark: #dc2626; --theme-glow: rgba(239, 68, 68, 0.1); }
-        .theme-blue { --color-primary: #3b82f6; --color-primary-dark: #2563eb; --theme-glow: rgba(59, 130, 246, 0.1); }
-        .theme-yellow { --color-primary: #eab308; --color-primary-dark: #ca8a04; --theme-glow: rgba(234, 179, 8, 0.1); }
-        .theme-green { --color-primary: #10b981; --color-primary-dark: #059669; --theme-glow: rgba(16, 185, 129, 0.1); }
+        .theme-red { --color-primary: #ef4444; --color-primary-dark: #dc2626; --theme-glow: rgba(239, 68, 68, 0.2); }
+        .theme-blue { --color-primary: #3b82f6; --color-primary-dark: #2563eb; --theme-glow: rgba(59, 130, 246, 0.2); }
+        .theme-yellow { --color-primary: #eab308; --color-primary-dark: #ca8a04; --theme-glow: rgba(234, 179, 8, 0.2); }
+        .theme-green { --color-primary: #10b981; --color-primary-dark: #059669; --theme-glow: rgba(16, 185, 129, 0.2); }
 
         .text-primary-custom { color: var(--color-primary); }
         .bg-primary-custom { background-color: var(--color-primary); }
@@ -75,7 +75,7 @@
 
         .bg-animated {
             background: radial-gradient(circle at 20% 20%, var(--theme-glow) 0%, transparent 40%),
-                        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.20) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.10) 0%, transparent 40%),
                         #090d16;
             background-size: 150% 150%;
             animation: ambientMove 14s ease-in-out infinite alternate;
@@ -1624,17 +1624,17 @@
                 userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
 
                 let qScore = 20;
-                let qCoins = 4;
+                let qCoins = 6;
                 let speedText = "Štandardné tempo";
 
                 if (responseTime < 5.0) {
                     qScore = 40;
-                    qCoins = 8;
+                    qCoins = 10;
                     speedText = "⚡ BLESKOVÁ POLE POSITION!";
                     userData.stats.lightningAnswers = (userData.stats.lightningAnswers || 0) + 1;
                 } else if (responseTime < 10.0) {
                     qScore = 30;
-                    qCoins = 6;
+                    qCoins = 8;
                     speedText = "🔥 Skvelá rýchlost v zákrute!";
                 }
 
