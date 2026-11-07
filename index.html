@@ -75,7 +75,7 @@
 
         .bg-animated {
             background: radial-gradient(circle at 20% 20%, var(--theme-glow) 0%, transparent 40%),
-                        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.20) 0%, transparent 40%),
                         #090d16;
             background-size: 150% 150%;
             animation: ambientMove 14s ease-in-out infinite alternate;
@@ -440,7 +440,7 @@
         ];
 
         const avatarsCatalog = [
-            { icon: "🏎️", price: 0 },
+            { icon: "🕶️", price: 0 },
             { icon: "🪖", price: 100 },
             { icon: "🏁", price: 120 },
             { icon: "🛞", price: 140 },
@@ -451,7 +451,7 @@
             { icon: "🚩", price: 280 },
             { icon: "🚦", price: 300 },
             { icon: "🛠️", price: 350 },
-            { icon: "🕶️", price: 400 },
+            { icon: "🏎️", price: 400 },
             { icon: "🧊", price: 450 },
             { icon: "🦁", price: 500 },
             { icon: "👑", price: 650 }
@@ -505,13 +505,18 @@
         const quotesCatalog = [
             { id: "Červené svetlá zhasli a máme odštartované!", type: "quote", label: "🎙️ EisKing", price: 600 },
             { id: "Leave me alone, I know what I'm doing", type: "quote", label: "💬 Kimi Räikkönen", price: 650 },
-            { id: "Simply lovely!", type: "quote", label: "💬 Max Verstappen", price: 600 },
-            { id: "Hammer time!", type: "quote", label: "💬 Bono / Hamilton", price: 600 },
+            { id: "Simply lovely!", type: "quote", label: "💬 Max Verstappen", price: 700 },
+            { id: "Hammer time!", type: "quote", label: "💬 Bono / Hamilton", price: 700 },
             { id: "All the time you have to leave a space!", type: "quote", label: "💬 Fernando Alonso", price: 700 },
             { id: "Box, box! Stay out, stay out!", type: "quote", label: "💬 Ferrari Pit Wall", price: 750 },
             { id: "No Michael no, that is so not right!", type: "quote", label: "💬 Toto Wolff", price: 800 },
-            { id: "We look like a bunch of wankers", type: "quote", label: "💬 Guenther Steiner", price: 850 },
-            { id: "GP2 Engine... GP2 Engine!", type: "quote", label: "💬 Fernando Alonso", price: 950 }
+            { id: "Bwoah", type: "quote", label: "💬 Kimi Räikkönen", price: 800 },
+            { id: "Nothing just an incident", type: "quote", label: "💬 Charles Leclerc", price: 800 },
+            { id: "We look like a bunch of wankers", type: "quote", label: "💬 Guenther Steiner", price: 800 },
+            { id: "GP2 Engine... GP2 Engine!", type: "quote", label: "💬 Fernando Alonso", price: 800 },
+            { id: "Multi 21, Seb, multi 21", type: "quote", label: "💬 Mark Webber", price: 900 },
+            { id: "I race to win, not just to finish", type: "quote", label: "💬 Ayrton Senna", price: 900 }
+            
         ];
 
         const questionsPool = [
@@ -1618,18 +1623,18 @@
 
                 userData.stats.totalCorrect = (userData.stats.totalCorrect || 0) + 1;
 
-                let qScore = 15;
-                let qCoins = 2;
+                let qScore = 20;
+                let qCoins = 4;
                 let speedText = "Štandardné tempo";
 
                 if (responseTime < 5.0) {
-                    qScore = 30;
-                    qCoins = 6;
+                    qScore = 40;
+                    qCoins = 8;
                     speedText = "⚡ BLESKOVÁ POLE POSITION!";
                     userData.stats.lightningAnswers = (userData.stats.lightningAnswers || 0) + 1;
                 } else if (responseTime < 10.0) {
-                    qScore = 20;
-                    qCoins = 4;
+                    qScore = 30;
+                    qCoins = 6;
                     speedText = "🔥 Skvelá rýchlost v zákrute!";
                 }
 
